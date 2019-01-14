@@ -1,0 +1,63 @@
+body {
+  background: rgb(245, 245, 245);
+}
+
+.logo {
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  margin: -5% -16%;
+  background: url(Images/Armasel_logo.jpg);
+  width: 400px;
+  height: 160px;
+  transform: scale(0.5, 0.5);
+  -ms-transform: scale(0.5, 0.5);
+  -webkit-transform: scale(0.5, 0.5);
+}
+
+.inputData {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input {
+  width: 200px;
+  height: 25px;
+  border: 1px solid rgb(136, 136, 136);
+  background-color: rgb(248, 248, 248);
+  border-radius: 5px;
+}
+
+button {
+  width: 200px;
+  height: 30px;
+  border: 1px solid rgb(13,93,149);
+  background-color: rgb(13,93,149);
+  opacity: 0.9;
+  border-radius: 5px;
+  color: white;
+}
+
+div {
+  position: absolute;
+  background-color: white;
+  outline: 1px solid rgb(184, 184, 255);
+  width: 300px;
+  height: 400px;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+p {
+  position: relative;
+  font-weight: 600;
+  line-height: 20px;
+  font-size: 17px;
+  color: #999;
+  text-align: center;
+  margin: 0 40px 20px;
+}
