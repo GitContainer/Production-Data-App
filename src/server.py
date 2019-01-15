@@ -6,7 +6,7 @@ app.debug = True
 app.env = "development"
 
 @app.route("/")
-def index():
+def form():
     return render_template("form.html")
 
 if __name__ == "__main__":
