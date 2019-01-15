@@ -9,7 +9,7 @@ body {
   position: absolute;
   top: -50px;
   left: -85px;
-  background: url(Images/Armasel_logo.jpg);
+  background: url(images/Armasel_logo.jpg);
   width: 400px;
   height: 160px;
   transform: scale(0.5, 0.5);
