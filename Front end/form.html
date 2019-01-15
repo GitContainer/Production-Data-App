@@ -3,19 +3,29 @@
     <head>
         <meta charset="UTF-8">
         <title>Armasel: Iniciar sesión</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="styleForm.css">
-    </head>
+        <link rel="shortcut icon" href="Images/Armasel_icon.jpg" type="image/x-icon" />
+        
+    </head>    
     <body>
-        <div>
-            <h1 class="logo">Logo here</h1>
-            <p>
-                Inicia sesión para poder acceder a la información de producción en planta Tepetates
-            </p>
-            <form class="inputData">
-                    <input type="text" placeholder="Nombre y apellido" name="name"><br /><br />
-                    <input type="text" placeholder="Contraseña" name="password"><br /><br />
-                    <button>Iniciar sersión</button>
+        <div id="formBlock">
+            <div class="logo"><img src="Images/Armasel_logo.jpg"></div>
+            <label id="label1">Inicia sesión para poder acceder a la información de producción en planta Tepetates</label>
+            <form id="formData">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email1" aria-describedby="emailHelp" placeholder="Correo electrónico">
+                    <small id="emailHelp" class="form-text text-muted">No vamos a compartir tu información con nadie más</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password1" placeholder="Contraseña">
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="check1">
+                    <label class="form-check-label" for="exampleCheck1">Guardar mis datos</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
             </form>
-        </div>
-    </body>
+    </div>
+    </body> 
 </html>

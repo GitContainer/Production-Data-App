@@ -2,62 +2,44 @@ body {
   background: rgb(245, 245, 245);
 }
 
+#formBlock {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    background-color: white;
+    outline: 1px solid rgb(184, 184, 255);
+    width: 300px;
+    height: 490px;
+    margin-top: -200px;
+    margin-left: -150px;
+    padding: 0 25px;
+}
+
+#formData {
+    position:relative;
+    text-align: center;
+    padding: 10px 0;
+}
+
 .logo {
-  text-indent: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  position: relative;
-  margin: -5% -16%;
-  background: url(Images/Armasel_logo.jpg);
-  width: 400px;
-  height: 160px;
-  transform: scale(0.5, 0.5);
-  -ms-transform: scale(0.5, 0.5);
-  -webkit-transform: scale(0.5, 0.5);
+    margin: -5% -30%;
+    width: 400px;
+    height: 160px;
+    transform: scale(0.5, 0.5);
+    -ms-transform: scale(0.5, 0.5);
+    -webkit-transform: scale(0.5, 0.5);
 }
 
-.inputData {
-  position: absolute;
-  top: 75%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+#label1{
+    position: relative;
+    font-weight: 600;
+    line-height: 20px;
+    font-size: 17px;
+    color: #999;
+    text-align: center;
+    margin: 0 20px 13px;
 }
 
-input {
-  width: 200px;
-  height: 25px;
-  border: 1px solid rgb(136, 136, 136);
-  background-color: rgb(248, 248, 248);
-  border-radius: 5px;
-}
-
-button {
-  width: 200px;
-  height: 30px;
-  border: 1px solid rgb(13,93,149);
-  background-color: rgb(13,93,149);
-  opacity: 0.9;
-  border-radius: 5px;
-  color: white;
-}
-
-div {
-  position: absolute;
-  background-color: white;
-  outline: 1px solid rgb(184, 184, 255);
-  width: 300px;
-  height: 400px;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-p {
-  position: relative;
-  font-weight: 600;
-  line-height: 20px;
-  font-size: 17px;
-  color: #999;
-  text-align: center;
-  margin: 0 40px 20px;
+button{
+    width: 150px;
 }
