@@ -1,0 +1,45 @@
+body {
+  background: rgb(245, 245, 245);
+}
+
+#formBlock {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    background-color: white;
+    outline: 1px solid rgb(184, 184, 255);
+    width: 300px;
+    height: 445px;
+    margin-top: -200px;
+    margin-left: -150px;
+    padding: 0 25px;
+}
+
+#formData {
+    position:relative;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.logo {
+    margin: -5% -30%;
+    width: 400px;
+    height: 160px;
+    transform: scale(0.5, 0.5);
+    -ms-transform: scale(0.5, 0.5);
+    -webkit-transform: scale(0.5, 0.5);
+}
+
+#label1{
+    position: relative;
+    font-weight: 600;
+    line-height: 20px;
+    font-size: 17px;
+    color: #999;
+    text-align: center;
+    margin: 0 20px 13px;
+}
+
+button{
+    width: 150px;
+}
