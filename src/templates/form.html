@@ -12,13 +12,13 @@
         <div id="formBlock">
             <div class="logo"><img src="{{ url_for('static', filename='images/Armasel_logo.jpg') }}"></div>
             <label id="label1">Inicia sesión para poder acceder a la información de producción en planta Tepetates</label>
-            <form id="formData">
+            <form id="formData" action="{{ url_for('table') }}" method="post">
                 <div class="form-group">
-                    <input type="email" class="form-control" id="email1" aria-describedby="emailHelp" placeholder="Correo electrónico">
+                    <input type="email" class="form-control" name="email1" aria-describedby="emailHelp" placeholder="Correo electrónico">
                     <small id="emailHelp" class="form-text text-muted">No vamos a compartir tu información con nadie más</small>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" id="password1" placeholder="Contraseña">
+                    <input type="password" class="form-control" name="password1" placeholder="Contraseña">
                 </div>
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="check1">
