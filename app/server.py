@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request
+from models import *
 
 app = Flask(__name__)
 app.debug = True
 app.env = "development"
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:Autom2018@localhost/production_data'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
 @app.route("/")
 def form():
@@ -17,5 +21,10 @@ def table():
     else:
         return "Datos incorrectos, regrese a la página de inicio para volver a intentarlo."
 
+def main():
+    db.create_all()
+
 if __name__ == "__main__":
-    app.run(host='127.0.0.2', port=5000, debug=True)
+    with app.app_context():
+        main()
+    #app.run(host='127.0.0.2', port=5000, debug=True)

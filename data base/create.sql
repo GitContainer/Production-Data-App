@@ -1,12 +1,22 @@
-CREATE TABLE flights (
-    id SERIAL PRIMARY KEY,
-    origin VARCHAR NOT NULL,
-    destination VARCHAR NOT NULL,
-    duration INTEGER NOT NULL
-);
-SELECT * FROM flights;
-INSERT INTO flights
-    (origin, destination, duration)
-    VALUES ('Lima', 'New York', 455);
-SELECT origin, destination FROM flights;
-SELECT * FROM flights WHERE origin = 'New York';
+-- CREATE TABLE flights (
+--     id SERIAL PRIMARY KEY,
+--     origin VARCHAR NOT NULL,
+--     destination VARCHAR NOT NULL,
+--     duration INTEGER NOT NULL
+-- );
+-- SELECT * FROM flights;
+-- INSERT INTO flights
+--     (origin, destination, duration)
+--     VALUES ('Shangai', 'Istanbul', 735);
+-- SELECT origin, destination FROM flights;
+-- SELECT * FROM flights WHERE origin = 'New York';
+-- SELECT AVG(duration) FROM flights 
+--     WHERE destination = 'New York';
+-- UPDATE flights
+--     SET duration = 430
+--     WHERE origin = 'Lima'
+--     AND destination = 'New York';
+-- DELETE FROM flights
+--     WHERE destination = 'Istanbul';
+select * from products
+delete  from users where id = 4

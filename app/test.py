@@ -1,15 +1,15 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-import mysql.connector
+import psycopg2
 
-engine = create_engine('mysql+mysqlconnector://root:Autom2018@127.0.0.1/produccion')
+engine = create_engine('postgresql+psycopg2://postgres:Autom2018@localhost/lecture3')
 db = scoped_session(sessionmaker(bind=engine))
 
 def main():
-    machines = db.execute("SELECT * FROM produccion.maquina").fetchall()
-    for machine in machines:
-        print(machine.nombre)
+    flights = db.execute("SELECT * FROM flights").fetchall()
+    for flight in flights:
+        print(flight.id, flight.origin, flight.destination, flight.duration)
 
 if __name__ == "__main__":
     main()
