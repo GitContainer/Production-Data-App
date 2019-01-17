@@ -16,7 +16,7 @@ body {
 }
 
 #formData {
-    position:relative;
+    position: relative;
     text-align: center;
     padding: 10px 0;
 }
@@ -30,7 +30,7 @@ body {
     -webkit-transform: scale(0.5, 0.5);
 }
 
-#label1{
+#label1 {
     position: relative;
     font-weight: 600;
     line-height: 20px;
@@ -42,12 +42,14 @@ body {
 
 button{
     width: 150px;
-      /* Animations: */
-    -webkit-transition-timing-function: ease-in-out;
-    -webkit-transition-duration: .4s;
-    -webkit-transition-property: all;
-    
-    -moz-transition-timing-function: ease-in-out;
-    -moz-transition-duration: .4s;
-    -moz-transition-property: all;
+}
+
+ul {
+    position: absolute;
+    top: 78%;
+    left: 36%;
+    width: 343px;
+    list-style-type: none;
+    text-align: center;
+    font-size: 25px;
 }

@@ -26,4 +26,8 @@ insert into users
 SELECT email FROM users
     WHERE email='julio.sanchez@armasel.com' 
     AND password = crypt('Autom2018', password);
-drop table users
+drop table users;
+
+UPDATE users
+    SET password = '$2b$12$ahpKOVPh4ntwBX5UHmm2XeKUzJjCC5tBHwkeDSO6q2Potfv6agXFq'
+    WHERE id = 1
