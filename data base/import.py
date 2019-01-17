@@ -17,7 +17,7 @@ def productsUpload():
     reader = csv.reader(f)
     next(reader)
     for key, kind, description, units, weight, cross_wires in reader:
-        product = Product(key=key, kind=kind, description=description, units=units, weight=weight, cross_wires=cross_wires)
+        product = Product(id=key, kind=kind, description=description, units=units, weight=weight, cross_wires=cross_wires)
         db.add(product)
         print(f"Added product {key}.")
     db.commit()

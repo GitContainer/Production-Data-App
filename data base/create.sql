@@ -18,5 +18,12 @@
 --     AND destination = 'New York';
 -- DELETE FROM flights
 --     WHERE destination = 'Istanbul';
-select * from products
-delete  from users where id = 4
+select * from users
+CREATE EXTENSION pgcrypto;
+insert into users
+    (name, email, password)
+    values ('Julio Sánchez', 'julio.sanchez@armasel.com', crypt('Autom2018', gen_salt('bf', 8)));
+SELECT email FROM users
+    WHERE email='julio.sanchez@armasel.com' 
+    AND password = crypt('Autom2018', password);
+drop table users
