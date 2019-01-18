@@ -18,7 +18,7 @@
 --     AND destination = 'New York';
 -- DELETE FROM flights
 --     WHERE destination = 'Istanbul';
-select * from machines
+select * from machines; 
 CREATE EXTENSION pgcrypto;
 insert into users
     (name, email, password)
@@ -28,6 +28,9 @@ SELECT email FROM users
     AND password = crypt('Autom2018', password);
 drop table users;
 
-UPDATE users
-    SET password = '$2b$12$ahpKOVPh4ntwBX5UHmm2XeKUzJjCC5tBHwkeDSO6q2Potfv6agXFq'
-    WHERE id = 1
+update users set name = 'Braulio Gonzalez' where id = 2;
+
+
+UPDATE machines
+    SET start_hour = '10:30:00'
+    WHERE id = 'MG320'
