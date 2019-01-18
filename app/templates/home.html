@@ -24,16 +24,21 @@
                     <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="30" height="42" class="d-inline-block align-middle" alt="" >
                     <font color="white">Armasel planta Tepetates</font>
                 </a>
-                <button onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>     
+                <nav class="navbar navbar-expand-lg px-4 py-2 bg-dark shadow">
+                    <a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead">
+                        <i class="fas fa-align-left"></i>
+                    </a>
+                </nav> 
+                <button style="float: right; color:lightgray; border-color: lightgray;" onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>    
             </nav>
         </header>
         <!-- Main Frame -->
         <div class="d-flex align-items-stretch">
-            <!-- Sidebar menu -->
+            <!-- Sidebar -->
             <div id="sidebar" class="sidebar py-3">
-                <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Producción</div>
+                <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Datos</div>
                 <ul class="sidebar-menu list-unstyled">
-                    <li class="sidebar-list-item"><a href="index.html" class="sidebar-link text-muted active"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
+                    <li class="sidebar-list-item"><a href="{{ url_for('home')}}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>PG12</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>EVG</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Jager</span></a></li>
@@ -43,86 +48,90 @@
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 5</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 6</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 7</span></a></li>
-                </ul>
-                </div>
+              </ul>
+              <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Altas</div>
+              <ul class="sidebar-menu list-unstyled">
+                    <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Alta operador</span></a></li>
+                    <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Alta producto</span></a></li>
+              </ul>
             </div>
-            <!-- General table -->
+            <!-- Table -->
             <div class="page-holder w-100 d-flex flex-wrap">
-                <div class="container-fluid px-xl-5">
-                    <section class="py-5">
-                        <div class="row">
-                            <div class="col-lg-6 mb-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h6 class="text-uppercase mb-0"><center>Electrosoldadoras</center></h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <table class="table card-text">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre</th>
-                                                    <th>Hora de inicio</th>
-                                                    <th>Tiempo en paro</th>
-                                                    <th>Número de paros</th>
-                                                    <th>Velocidad (GPM)</th>
-                                                    <th>Golpes</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">PG12</th>
-                                                    <td>10:30:05</td>
-                                                    <td>3:25:33</td>
-                                                    <td>15</td>
-                                                    <td>87</td>
-                                                    <td>869</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">EVG</th>
-                                                    <td>8:30:05</td>
-                                                    <td>5:05:33</td>
-                                                    <td>8</td>
-                                                    <td>0</td>
-                                                    <td>430</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Jager</th>
-                                                    <td>7:45:00</td>
-                                                    <td>00:05:00</td>
-                                                    <td>2</td>
-                                                    <td>95</td>
-                                                    <td>2367</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+              <div class="container-fluid px-xl-5">
+                <section class="py-5">
+                  <div class="row">
+                    <div class="col-lg-6 mb-4">
+                      <div class="card" style="width:850px">
+                        <div class="card-header">
+                          <h6 class="text-uppercase mb-0"><center>Electrosoldadoras</center></h6>
                         </div>
-                    </section>
-                </div>
-            </div>      
-            <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6 text-center text-md-left text-primary">
-                            <p class="mb-2 mb-md-0">Armasel Aceros SA. de CV. &copy; Todos los derechos reservados.</p>
+                        <div class="card-body">
+                          <table class="table card-text">
+                            <thead>
+                              <tr>
+                                <th>Nombre</th>
+                                <th>Hora de inicio</th>
+                                <th>Tiempo en paro</th>
+                                <th>Número de paros</th>
+                                <th>Velocidad (GPM)</th>
+                                <th>Golpes</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">PG12</th>
+                                    <td>10:30:05</td>
+                                    <td>3:25:33</td>
+                                    <td>15</td>
+                                    <td>87</td>
+                                    <td>869</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">EVG</th>
+                                    <td>8:30:05</td>
+                                    <td>5:05:33</td>
+                                    <td>8</td>
+                                    <td>0</td>
+                                    <td>430</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Jager</th>
+                                    <td>7:45:00</td>
+                                    <td>00:05:00</td>
+                                    <td>2</td>
+                                    <td>95</td>
+                                    <td>2367</td>
+                                </tr>
+                            </tbody>
+                          </table>
                         </div>
-                        <div class="col-md-6 text-center text-md-right text-gray-400">
-                            <p class="mb-0">Design by <a href="https://bootstrapious.com/admin-templates" class="external text-gray-400">Bootstrapious</a></p>
-                            <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
-                        </div>
+                      </div>
                     </div>
+                  </div>
+                </section>
+              </div>
+              <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-6 text-center text-md-left text-primary">
+                      <p class="mb-2 mb-md-0">Armasel SA. de CV.&copy; 2019, Todos los derechos reservados</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-right text-gray-400">
+                      <p class="mb-0">Design by <a href="https://bootstrapious.com/admin-templates" class="external text-gray-400">Bootstrapious</a></p>
+                      <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
+                    </div>
+                  </div>
                 </div>
-            </footer>
-        </div>
+              </footer>
+            </div>
+          </div>
         <!-- JavaScript files-->
-        <script src="vendor/jquery/jquery.min.js"></script>
-        <script src="vendor/popper.js/umd/popper.min.js"> </script>
-        <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-        <script src="vendor/jquery.cookie/jquery.cookie.js"> </script>
-        <script src="vendor/chart.js/Chart.min.js"></script>
+        <script src= "{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/popper.js/umd/popper.min.js') }}"> </script>
+        <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/jquery.cookie/jquery.cookie.js') }}"> </script>
+        <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-        <script src="js/front.js"></script>
+        <script src="{{ url_for('static', filename='js/front.js') }}"></script>
     </body>
 </html>
