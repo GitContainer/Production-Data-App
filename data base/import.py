@@ -2,8 +2,8 @@ import csv
 import os
 import sys
 
-#sys.path.append('C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\app')
-sys.path.append('D:\\Projects\\production-data-app\\app')
+sys.path.append('C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\app')
+#sys.path.append('D:\\Projects\\production-data-app\\app')
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -37,8 +37,8 @@ def usersUpload():
     db.commit()
 
 def machinesUpload():
-    #path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\users.csv"
-    path = "D:\\Projects\\production-data-app\\data base\\machines.csv"
+    path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\machines.csv"
+    #path = "D:\\Projects\\production-data-app\\data base\\machines.csv"
     f = open(path)
     reader = csv.reader(f)
     next(reader)
