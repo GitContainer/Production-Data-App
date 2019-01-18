@@ -17,42 +17,112 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     </head>
     <body>
+         <!-- Header -->
         <header>
             <nav class="navbar navbar-dark bg-dark">
                 <a class="navbar-brand">
-                    <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="32" height="48" class="d-inline-block align-middle" alt="" >
+                    <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="30" height="42" class="d-inline-block align-middle" alt="" >
                     <font color="white">Armasel planta Tepetates</font>
                 </a>
                 <button onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>     
             </nav>
         </header>
+        <!-- Main Frame -->
         <div class="d-flex align-items-stretch">
+            <!-- Sidebar menu -->
             <div id="sidebar" class="sidebar py-3">
-              <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Producción</div>
-              <ul class="sidebar-menu list-unstyled">
+                <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Producción</div>
+                <ul class="sidebar-menu list-unstyled">
                     <li class="sidebar-list-item"><a href="index.html" class="sidebar-link text-muted active"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Charts</span></a></li>
-                    <li class="sidebar-list-item"><a href="tables.html" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tables</span></a></li>
-                    <li class="sidebar-list-item"><a href="forms.html" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span>Forms</span></a></li>
-                <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#pages" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-wireframe-1 mr-3 text-gray"></i><span>Pages</span></a>
-                <div id="pages" class="collapse">
-                    <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
-                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page one</a></li>
-                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page two</a></li>
-                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page three</a></li>
-                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page four</a></li>
-                    </ul>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>PG12</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>EVG</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Jager</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>MG320</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 1</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 4</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 5</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 6</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 7</span></a></li>
+                </ul>
                 </div>
-            </li>
-                <li class="sidebar-list-item"><a href="login.html" class="sidebar-link text-muted"><i class="o-exit-1 mr-3 text-gray"></i><span>Login</span></a></li>
-            </ul>
-            <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">EXTRAS</div>
-            <ul class="sidebar-menu list-unstyled">
-                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-database-1 mr-3 text-gray"></i><span>Demo</span></a></li>
-                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-imac-screen-1 mr-3 text-gray"></i><span>Demo</span></a></li>
-                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Demo</span></a></li>
-                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-wireframe-1 mr-3 text-gray"></i><span>Demo</span></a></li>
-            </ul>
+            </div>
+            <!-- General table -->
+            <div class="page-holder w-100 d-flex flex-wrap">
+                <div class="container-fluid px-xl-5">
+                    <section class="py-5">
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="text-uppercase mb-0"><center>Electrosoldadoras</center></h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table card-text">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Hora de inicio</th>
+                                                    <th>Tiempo en paro</th>
+                                                    <th>Número de paros</th>
+                                                    <th>Velocidad (GPM)</th>
+                                                    <th>Golpes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">PG12</th>
+                                                    <td>10:30:05</td>
+                                                    <td>3:25:33</td>
+                                                    <td>15</td>
+                                                    <td>87</td>
+                                                    <td>869</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">EVG</th>
+                                                    <td>8:30:05</td>
+                                                    <td>5:05:33</td>
+                                                    <td>8</td>
+                                                    <td>0</td>
+                                                    <td>430</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Jager</th>
+                                                    <td>7:45:00</td>
+                                                    <td>00:05:00</td>
+                                                    <td>2</td>
+                                                    <td>95</td>
+                                                    <td>2367</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>      
+            <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-left text-primary">
+                            <p class="mb-2 mb-md-0">Armasel Aceros SA. de CV. &copy; Todos los derechos reservados.</p>
+                        </div>
+                        <div class="col-md-6 text-center text-md-right text-gray-400">
+                            <p class="mb-0">Design by <a href="https://bootstrapious.com/admin-templates" class="external text-gray-400">Bootstrapious</a></p>
+                            <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
+        <!-- JavaScript files-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/popper.js/umd/popper.min.js"> </script>
+        <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+        <script src="vendor/jquery.cookie/jquery.cookie.js"> </script>
+        <script src="vendor/chart.js/Chart.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+        <script src="js/front.js"></script>
     </body>
 </html>
