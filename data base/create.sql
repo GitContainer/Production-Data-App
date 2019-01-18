@@ -18,7 +18,7 @@
 --     AND destination = 'New York';
 -- DELETE FROM flights
 --     WHERE destination = 'Istanbul';
-select * from users
+select * from machines
 CREATE EXTENSION pgcrypto;
 insert into users
     (name, email, password)

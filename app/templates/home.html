@@ -6,17 +6,53 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styleHome.css') }}">
         <link rel="shortcut icon" href="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" type="image/x-icon" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+        <!-- Google fonts - Popppins for copy-->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,800">
+        <!-- orion icons-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/orionicons.css') }}">
+        <!-- theme stylesheet-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.default.css') }}" id="theme-stylesheet">
+        <!-- Custom stylesheet - for your changes-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     </head>
     <body>
         <header>
             <nav class="navbar navbar-dark bg-dark">
                 <a class="navbar-brand">
-                    <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="38" height="60" class="d-inline-block align-middle" alt="" >
+                    <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="32" height="48" class="d-inline-block align-middle" alt="" >
                     <font color="white">Armasel planta Tepetates</font>
                 </a>
-                <button onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>
+                <button onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>     
             </nav>
         </header>
-        <table>
+        <div class="d-flex align-items-stretch">
+            <div id="sidebar" class="sidebar py-3">
+              <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Producción</div>
+              <ul class="sidebar-menu list-unstyled">
+                    <li class="sidebar-list-item"><a href="index.html" class="sidebar-link text-muted active"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Charts</span></a></li>
+                    <li class="sidebar-list-item"><a href="tables.html" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tables</span></a></li>
+                    <li class="sidebar-list-item"><a href="forms.html" class="sidebar-link text-muted"><i class="o-survey-1 mr-3 text-gray"></i><span>Forms</span></a></li>
+                <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#pages" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-wireframe-1 mr-3 text-gray"></i><span>Pages</span></a>
+                <div id="pages" class="collapse">
+                    <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
+                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page one</a></li>
+                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page two</a></li>
+                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page three</a></li>
+                        <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Page four</a></li>
+                    </ul>
+                </div>
+            </li>
+                <li class="sidebar-list-item"><a href="login.html" class="sidebar-link text-muted"><i class="o-exit-1 mr-3 text-gray"></i><span>Login</span></a></li>
+            </ul>
+            <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">EXTRAS</div>
+            <ul class="sidebar-menu list-unstyled">
+                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-database-1 mr-3 text-gray"></i><span>Demo</span></a></li>
+                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-imac-screen-1 mr-3 text-gray"></i><span>Demo</span></a></li>
+                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Demo</span></a></li>
+                <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-wireframe-1 mr-3 text-gray"></i><span>Demo</span></a></li>
+            </ul>
+        </div>
     </body>
 </html>

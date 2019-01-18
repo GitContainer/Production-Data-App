@@ -28,7 +28,7 @@ class Machine(db.Model):
     stop_time = db.Column(db.Time, nullable=True) 
     stops = db.Column(db.Integer, nullable=True)
     velocity = db.Column(db.Integer, nullable=True)
-    hits = db.Column(db.Integer, nullable=False, default=0)
+    hits = db.Column(db.Integer, nullable=True, default=0)
 
 class Production(db.Model):
     __tablename__ = "production"

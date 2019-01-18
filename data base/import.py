@@ -2,7 +2,8 @@ import csv
 import os
 import sys
 
-sys.path.append('C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\app')
+#sys.path.append('C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\app')
+sys.path.append('D:\\Projects\\production-data-app\\app')
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -12,7 +13,8 @@ engine = create_engine('postgresql+psycopg2://postgres:Autom2018@localhost/produ
 db = scoped_session(sessionmaker(bind=engine))
 
 def productsUpload():
-    path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\products.csv"
+    #path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\products.csv"
+    path = "D:\\Projects\\production-data-app\\data base\\products.csv"
     f = open(path)
     reader = csv.reader(f)
     next(reader)
@@ -23,7 +25,8 @@ def productsUpload():
     db.commit()
 
 def usersUpload():
-    path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\users.csv"
+    #path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\users.csv"
+    path = "D:\\Projects\\production-data-app\\data base\\products.csv"
     f = open(path)
     reader = csv.reader(f)
     next(reader)
@@ -33,5 +36,17 @@ def usersUpload():
         print(f"Added product {name} with email: {email}.")
     db.commit()
 
+def machinesUpload():
+    #path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\users.csv"
+    path = "D:\\Projects\\production-data-app\\data base\\machines.csv"
+    f = open(path)
+    reader = csv.reader(f)
+    next(reader)
+    for id, name in reader:
+        machine = Machine(id=id, name=name)
+        db.add(machine)
+        print(f"Added machine {id} with name: {name}.")
+    db.commit()
+
 if __name__ == "__main__":
-    usersUpload()
+    machinesUpload()
