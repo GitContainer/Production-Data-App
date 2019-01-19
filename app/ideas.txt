@@ -1,0 +1,2 @@
+when a machine stop producing for more than 30 minutes alert
+when a machine works at a very los speed, alert
