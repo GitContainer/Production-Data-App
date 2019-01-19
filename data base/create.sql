@@ -18,8 +18,8 @@
 --     AND destination = 'New York';
 -- DELETE FROM flights
 --     WHERE destination = 'Istanbul';
-select * from machines; 
-CREATE EXTENSION pgcrypto;
+select * from production; 
+-- CREATE EXTENSION pgcrypto;
 insert into users
     (name, email, password)
     values ('Julio Sánchez', 'julio.sanchez@armasel.com', crypt('Autom2018', gen_salt('bf', 8)));
@@ -29,8 +29,14 @@ SELECT email FROM users
 drop table users;
 
 update users set name = 'Braulio Gonzalez' where id = 2;
-
-
 UPDATE machines
     SET start_hour = '10:30:00'
-    WHERE id = 'MG320'
+    WHERE id = 'MG320';
+
+INSERT INTO production 
+    (date, shift, machine, start_hour, stop_time, stops, hits)
+    VALUES ('19/01/2019', 1, 'Schlatter 5', '9:30:05', '3:20:15', 50, 549);
+
+delete from production where id >= 1;
+
+-- ALTER TABLE production ALTER COLUMN date TYPE VARCHAR;

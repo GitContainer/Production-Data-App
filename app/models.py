@@ -33,7 +33,7 @@ class Machine(db.Model):
 class Production(db.Model):
     __tablename__ = "production"
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date, nullable=False)
+    date = db.Column(db.String, nullable=False)
     shift = db.Column(db.SmallInteger, nullable=False)
     machine = db.Column(db.String, nullable=False)
     start_hour = db.Column(db.Time, nullable=True)

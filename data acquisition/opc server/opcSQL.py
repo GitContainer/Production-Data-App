@@ -3,6 +3,7 @@ from snap7.util import *
 from snap7.snap7types import *
 from time import sleep, strftime, gmtime, time
 from datetime import date, datetime
+import time as dt
 import psycopg2
 
 machines_status = {"SCHL4": False,
@@ -14,6 +15,8 @@ machines_status = {"SCHL4": False,
                     "5S07": False,
                     "EVG": False,
                     "SCHL6": False} 
+
+start_times = {}
 
 def ReadMemory(plc,byte,bit,datatype):
     result = plc.read_area(areas['MK'],0,byte,datatype)
@@ -178,20 +181,47 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits):
             if machines_status[key] == False and starts[key] == True:
                 machines_status[key] = True
                 hour = datetime.now().strftime('%H:%M:%S')
+                start_times[key] = hour
                 query = ('UPDATE machines SET start_hour = %s where id = %s')
                 values = (hour, key)
-                print(hour)
-                print(str(hour))
                 cur.execute(query, values)
-                print(key)
-                print(stops[key], velocities[key], hits[key])
             query = """UPDATE machines 
                         SET stop_time = %s,
                             stops = %s,
                             velocity = %s,
                             hits = %s
                         WHERE id = %s"""
-            cur.execute(query, (stoptimes[key], stops[key], velocities[key], hits[key], key))
+            values = (stoptimes[key], stops[key], velocities[key], hits[key], key)
+            cur.execute(query, values)
+
+def storeData(cur, shift, starts, stoptimes, stops, hits):
+    date =  dt.strftime("%A %d/%m/%Y")
+    for key in machines_status.keys():
+        if machines_status[key] is True:
+            query = """INSERT INTO production 
+                        (date, shift, machine, start_hour, stop_time, stops, hits)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+            machine = getMachine(key)
+            values = (date, shift, machine, start_times[key], stoptimes[key], stops[key], hits[key])
+            cur.execute(query, values)
+
+def getMachine(id):
+    D = {"SCHL4": "Schlatter 4",
+            "SCHL5": "Schlatter 5",
+            "SCHL7": "Schlatter 7",
+            "JAGER": "Jager",
+            "SCHL1": "Schlatter 1",
+            "MG320":"MG320",
+            "5S07": "PG12",
+            "EVG": "EVG",
+            "SCHL6": "Schlatter 6"}
+    return D[id]
+
+def getShift(plc):
+    if ReadMemory(plc, 0, 0, S7WLBit):
+        return 1
+    elif ReadMemory(plc, 0, 1, S7WLBit):
+        return 3
 
 def endOfShift(plc):
     return ReadMemory(plc, 1, 1, S7WLBit)   
@@ -199,22 +229,38 @@ def endOfShift(plc):
 def AKS(plc):
     WriteMemory(plc, 0, 7, S7WLBit, True)
 
-if __name__=="__main__":    
+def timer(inicial_value, preset_value):
+    elapsed = round(time() - inicial_value, 2)
+    if elapsed >= preset_value:
+        return True
+    return False
+
+if __name__=="__main__":
+    t = time()
     log = open("log.txt", 'a+')
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
         conn, cur = connectSQL("postgres", "Autom2018", "localhost", "production_data")
         if conn:
-            while True:
-                starts = checkStart(plc)
-                hits = gatherProductionData(plc)
-                stoptimes = gatherStopTime(plc)
-                velocities = gatherVelocities(plc)
-                stops = gatherStops(plc)
-                uploadData(cur, starts, stoptimes, stops, velocities, hits)
+            try:
+                shift = getShift(plc)
+                while True:
+                    starts = checkStart(plc)
+                    hits = gatherProductionData(plc)
+                    stoptimes = gatherStopTime(plc)
+                    velocities = gatherVelocities(plc)
+                    stops = gatherStops(plc)
+                    uploadData(cur, starts, stoptimes, stops, velocities, hits)
+                    conn.commit()
+                    if endOfShift(plc) or timer(t, 33000):
+                        break
+                storeData(cur, shift, starts, stoptimes, stops, hits)
                 conn.commit()
                 AKS(plc)
-            closeSQL(conn, cur)
+                closeSQL(conn, cur)
+            except:
+                log.write("Connection lost")
+                log.write("\n")
         else:
             log.write(str(cur))
             log.write("\n")
