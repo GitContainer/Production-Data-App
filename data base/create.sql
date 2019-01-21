@@ -18,7 +18,6 @@
 --     AND destination = 'New York';
 -- DELETE FROM flights
 --     WHERE destination = 'Istanbul';
-select * from production; 
 -- CREATE EXTENSION pgcrypto;
 insert into users
     (name, email, password)
@@ -40,3 +39,6 @@ INSERT INTO production
 delete from production where id >= 1;
 
 -- ALTER TABLE production ALTER COLUMN date TYPE VARCHAR;
+select * from machines; 
+select * from production; 
+select * from products;

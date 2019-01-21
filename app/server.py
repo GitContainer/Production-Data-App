@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, Response
+from flask import Flask, render_template, request, flash, redirect, url_for, Response, jsonify
 from models import *
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from sqlalchemy import and_
 from flask_bcrypt import Bcrypt
+from flask_socketio import SocketIO, emit, send
 
 app = Flask(__name__)
 app.debug = True
@@ -16,6 +17,7 @@ login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 login_manager.login_message = "Favor de iniciar sesión"
 bcrypt = Bcrypt(app)
+socketio = SocketIO(app)
 
 @app.route("/")
 def index():
@@ -54,11 +56,19 @@ def home():
 def load_user(id):
     return User.query.get(int(id))
 
+global cont
+cont = 0
+@socketio.on("all data")
+def refreshTable(msg):
+    global cont
+    cont += int(msg)
+    send(cont, broadcast = False)
+
 def main():
     db.create_all()
-    print("finished")
 
 if __name__ == "__main__":
     with app.app_context():
         main()
-    app.run(host='127.0.0.2', port=5000, debug=True)
+        #socketio.run(app)
+        app.run(host='127.0.0.2', port=5000, debug=True)

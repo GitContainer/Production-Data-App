@@ -19,18 +19,18 @@
     <body>
          <!-- Header -->
         <header>
-            <nav class="navbar navbar-dark bg-dark">
-                <a class="navbar-brand">
-                    <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="30" height="42" class="d-inline-block align-middle" alt="" >
-                    <font color="white">Armasel planta Tepetates</font>
-                </a>
-                <nav class="navbar navbar-expand-lg px-4 py-2 bg-dark shadow">
-                    <a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead">
-                        <i class="fas fa-align-left"></i>
-                    </a>
-                </nav> 
-                <button style="float: right; color:lightgray; border-color: lightgray;" onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>    
-            </nav>
+          <nav class="navbar navbar-dark bg-dark">
+              <a class="navbar-brand">
+                  <img src="{{ url_for('static', filename='images/Armasel_icon.jpg') }}" width="30" height="42" class="d-inline-block align-middle" alt="" >
+                  <font color="white">Armasel planta Tepetates</font>
+              </a>
+              <nav class="navbar navbar-expand-lg px-4 py-2 bg-dark shadow">
+                  <a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead">
+                      <i class="fas fa-align-left"></i>
+                  </a>
+              </nav> 
+              <button style="float: right; color:lightgray; border-color: lightgray;" onclick="window.location.href='/logout'" type="button" class="btn btn-outline-primary">Cerrar sesión</button>    
+          </nav>
         </header>
         <!-- Main Frame -->
         <div class="d-flex align-items-stretch">
@@ -79,6 +79,14 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <th scope="row">MG320</th>
+                                    <td>10:30:05</td>
+                                    <td>3:25:33</td>
+                                    <td>15</td>
+                                    <td>87</td>
+                                    <td id="counter">0</td>
+                                </tr>                              
+                                <tr>
                                     <th scope="row">PG12</th>
                                     <td>10:30:05</td>
                                     <td>3:25:33</td>
@@ -87,7 +95,7 @@
                                     <td>869</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">EVG</th>
+                                    <th scope="row">Jager</th>
                                     <td>8:30:05</td>
                                     <td>5:05:33</td>
                                     <td>8</td>
@@ -95,13 +103,37 @@
                                     <td>430</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Jager</th>
+                                    <th scope="row">Schlatter 1</th>
                                     <td>7:45:00</td>
                                     <td>00:05:00</td>
                                     <td>2</td>
                                     <td>95</td>
                                     <td>2367</td>
                                 </tr>
+                                <tr>
+                                    <th scope="row">Schlatter 4</th>
+                                    <td>10:30:05</td>
+                                    <td>3:25:33</td>
+                                    <td>15</td>
+                                    <td>87</td>
+                                    <td>869</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Schlatter 5</th>
+                                    <td>10:30:05</td>
+                                    <td>3:25:33</td>
+                                    <td>15</td>
+                                    <td>87</td>
+                                    <td>869</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Schlatter 7</th>
+                                    <td>10:30:05</td>
+                                    <td>3:25:33</td>
+                                    <td>15</td>
+                                    <td>87</td>
+                                    <td>869</td>
+                                </tr>                                                                                                
                             </tbody>
                           </table>
                         </div>
@@ -133,5 +165,6 @@
         <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script src="{{ url_for('static', filename='js/front.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/home.js') }}"></script>       
     </body>
 </html>
