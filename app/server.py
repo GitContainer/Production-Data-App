@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_socketio import SocketIO, emit, send
 import json
 from werkzeug.contrib.cache import SimpleCache
+import re
 
 app = Flask(__name__)
 app.debug = True
@@ -57,6 +58,11 @@ def logout():
 @login_required
 def home():
     return render_template('home.html')
+
+@app.route("/record", methods=['GET'])
+@login_required
+def record():
+    return render_template('record.html')
 
 @login_manager.user_loader
 def load_user(id):
@@ -138,6 +144,26 @@ def refresh_table_data():
                 }
     new_data = json.dumps(new_data)
     emit('table data', new_data, broadcast=False)
+
+@socketio.on('get annual production')
+@cached()
+def get_anual_production():
+    production = Production.query.all()
+    D = {}
+    for row in production:
+        d = {}
+        d["date"] = row.date
+        d["shift"] = row.shift
+        d["machine"] = row.machine
+        d["start_hour"] = str(row.start_hour)
+        d["stop_time"] = str(row.stop_time)
+        d["stops"] = row.stops
+        d["hits"] = row.hits
+        D[row.id] = d
+        del d
+    new_data = json.dumps(D)
+    print(new_data)
+    emit('annual production', new_data, broadcast=False)
 
 def main():
     db.create_all()

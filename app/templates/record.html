@@ -1,0 +1,103 @@
+{% extends "home.html" %}
+
+{% block body %}
+<!-- Table -->
+<section class="py-5">
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card" style="width:850px">
+        <div class="card-header">
+          <h6 class="text-uppercase mb-0">
+            <center>Producción anual</center>
+          </h6>
+        </div>
+        <div class="card-body">
+          <table class="table card-text">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Turno</th>
+                <th>Máquina</th>
+                <th>Hora de inicio</th>
+                <th>Tiempo en paro</th>
+                <th>Número de paros</th>
+                <th>Golpes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr>
+                <th scope="row"></th>
+                <td id="starttimeMG320"></td>
+                <td id="stoptimeMG320"></td>
+                <td id="stopsMG320"></td>
+                <td id="velMG320"></td>
+                <td id="hitsMG320"></td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td id="starttimePG12"></td>
+                <td id="stoptimePG12"></td>
+                <td id="stopsPG12"></td>
+                <td id="velPG12"></td>
+                <td id="hitsPG12"></td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td id="starttimeJager"></td>
+                <td id="stoptimeJager"></td>
+                <td id="stopsJager"></td>
+                <td id="velJager"></td>
+                <td id="hitsJager"></td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td id="starttimeSchlatter1"></td>
+                <td id="stoptimeSchlatter1"></td>
+                <td id="stopsSchlatter1"></td>
+                <td id="velSchlatter1"></td>
+                <td id="hitsSchlatter1"></td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td id="starttimeSchlatter4"></td>
+                <td id="stoptimeSchlatter4"></td>
+                <td id="stopsSchlatter4"></td>
+                <td id="velSchlatter4"></td>
+                <td id="hitsSchlatter4"></td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td id="starttimeSchlatter5"></td>
+                <td id="stoptimeSchlatter5"></td>
+                <td id="stopsSchlatter5"></td>
+                <td id="velSchlatter5"></td>
+                <td id="hitsSchlatter5"></td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td id="starttimeSchlatter7"></td>
+                <td id="stoptimeSchlatter7"></td>
+                <td id="stopsSchlatter7"></td>
+                <td id="velSchlatter7"></td>
+                <td id="hitsSchlatter7"></td>
+              </tr> -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" charset="utf-8">
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+  socket.on('connect', function() {
+    socket.emit('get annual production');
+  });
+
+  socket.on('annual production', function(new_data) {
+    // var json = JSON.parse(new_data);          
+  });
+</script>
+{% endblock %}

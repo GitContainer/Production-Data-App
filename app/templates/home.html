@@ -39,16 +39,22 @@
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Datos</div>
                 <ul class="sidebar-menu list-unstyled">
                     <li class="sidebar-list-item"><a href="{{ url_for('home')}}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>MG320</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>PG12</span></a></li>
-                    <!-- <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>EVG</span></a></li> -->
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Jager</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 1</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 4</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 5</span></a></li>
-                    <!-- <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 6</span></a></li> -->
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 7</span></a></li>
-                    <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Récord anual</span></a></li>                    
+                    <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#machines" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Máquinas</span></a>
+                      <div id="machines" class="collapse">
+                        <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">MG320</a></li>
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">PG12</a></li>
+                          <!-- <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">EVG</a></li> -->
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Jager</a></li>
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Schlatter 1</a></li>
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Schlatter 4</a></li>
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Schlatter 5</a></li>
+                          <!-- <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Schlatter 6</a></li> -->
+                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Schlatter 7</a></li>
+                        </ul>
+                      </div>
+                    </li>
+                    <li class="sidebar-list-item"><a href="{{ url_for('record')}}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Récord anual</span></a></li>                    
               </ul>
               <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Altas</div>
               <ul class="sidebar-menu list-unstyled">
@@ -56,9 +62,11 @@
                     <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Alta producto</span></a></li>
               </ul>
             </div>
-            <!-- Table -->
+            <!-- Content -->
             <div class="page-holder w-100 d-flex flex-wrap">
               <div class="container-fluid px-xl-5">
+                <!-- Table -->
+                {% block body %}
                 <section class="py-5">
                   <div class="row">
                     <div class="col-lg-6 mb-4">
@@ -70,7 +78,7 @@
                           <table class="table card-text">
                             <thead>
                               <tr>
-                                <th>Nombre</th>
+                                <th>Máquina</th>
                                 <th>Hora de inicio</th>
                                 <th>Tiempo en paro</th>
                                 <th>Número de paros</th>
@@ -142,6 +150,7 @@
                     </div>
                   </div>
                 </section>
+                {% endblock %}
               </div>
               <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
                 <div class="container-fluid">
@@ -168,6 +177,7 @@
         <script src="{{ url_for('static', filename='js/front.js') }}"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script> 
         <!-- JavaScript code for autoupdating data-->
+        {% block script %}
         <script type="text/javascript" charset="utf-8">
           var socket = io.connect('http://' + document.domain + ':' + location.port);
           socket.on('connect', function() {
@@ -221,6 +231,7 @@
             document.querySelector('#velSchlatter7').innerHTML = json['Schlatter7']['velocity'];
             document.querySelector('#hitsSchlatter7').innerHTML = json['Schlatter7']['hits'];                        
           });
-      </script>    
+      </script>
+      {% endblock %}    
     </body>
 </html>
