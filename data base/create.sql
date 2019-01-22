@@ -34,7 +34,7 @@ UPDATE machines
         stop_time = '00:30:15',
         stops = 5,
         velocity = 79,
-        hits = 236
+        hits = 456
     WHERE id = 'SCHL4';
 
 INSERT INTO production 
