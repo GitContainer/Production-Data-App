@@ -4,6 +4,8 @@ from flask_login import LoginManager, UserMixin, login_required, login_user, log
 from sqlalchemy import and_
 from flask_bcrypt import Bcrypt
 from flask_socketio import SocketIO, emit, send
+import json
+from werkzeug.contrib.cache import SimpleCache
 
 app = Flask(__name__)
 app.debug = True
@@ -18,6 +20,8 @@ login_manager.login_message_category = 'info'
 login_manager.login_message = "Favor de iniciar sesión"
 bcrypt = Bcrypt(app)
 socketio = SocketIO(app)
+CACHE_TIMEOUT = 1500
+cache = SimpleCache()
 
 @app.route("/")
 def index():
@@ -56,13 +60,82 @@ def home():
 def load_user(id):
     return User.query.get(int(id))
 
-global cont
-cont = 0
-@socketio.on("all data")
-def refreshTable(msg):
-    global cont
-    cont += int(msg)
-    send(cont, broadcast = False)
+class cached(object):
+
+    def __init__(self, timeout=None):
+        self.timeout = timeout or CACHE_TIMEOUT
+
+    def __call__(self, f):
+        def decorator(*args, **kwargs):
+            response = cache.get(request.path)
+            if response is None:
+                response = f(*args, **kwargs)
+                cache.set(request.path, response, self.timeout)
+            return response
+        return decorator
+
+@socketio.on('refresh table data')
+@cached()
+def refresh_table_data():
+    new_data = {"MG320": 
+                    {
+                        "start_time": str(Machine.query.filter_by(id='MG320').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='MG320').first().stop_time),
+                        "stops": Machine.query.filter_by(id='MG320').first().stops,
+                        "velocity": Machine.query.filter_by(id='MG320').first().velocity,
+                        "hits": Machine.query.filter_by(id='MG320').first().hits     
+                    },
+                "PG12":
+                    {
+                        "start_time": str(Machine.query.filter_by(id='5S07').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='5S07').first().stop_time),
+                        "stops": Machine.query.filter_by(id='5S07').first().stops,
+                        "velocity": Machine.query.filter_by(id='5S07').first().velocity,
+                        "hits": Machine.query.filter_by(id='5S07').first().hits                    
+                    },
+                "Jager":
+                    {
+                        "start_time": str(Machine.query.filter_by(id='JAGER').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='JAGER').first().stop_time),
+                        "stops": Machine.query.filter_by(id='JAGER').first().stops,
+                        "velocity": Machine.query.filter_by(id='JAGER').first().velocity,
+                        "hits": Machine.query.filter_by(id='JAGER').first().hits                         
+                    },
+                "Schlatter1":
+                    {
+                        "start_time": str(Machine.query.filter_by(id='SCHL1').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='SCHL1').first().stop_time),
+                        "stops": Machine.query.filter_by(id='SCHL1').first().stops,
+                        "velocity": Machine.query.filter_by(id='SCHL1').first().velocity,
+                        "hits": Machine.query.filter_by(id='SCHL1').first().hits                      
+                    },
+                "Schlatter4":
+                    {
+                        "start_time": str(Machine.query.filter_by(id='SCHL4').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='SCHL4').first().stop_time),
+                        "stops": Machine.query.filter_by(id='SCHL4').first().stops,
+                        "velocity": Machine.query.filter_by(id='SCHL4').first().velocity,
+                        "hits": Machine.query.filter_by(id='SCHL4').first().hits                        
+                    },
+                "Schlatter5":
+                    {
+                        "start_time": str(Machine.query.filter_by(id='SCHL5').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='SCHL5').first().stop_time),
+                        "stops": Machine.query.filter_by(id='SCHL5').first().stops,
+                        "velocity": Machine.query.filter_by(id='SCHL5').first().velocity,
+                        "hits": Machine.query.filter_by(id='SCHL5').first().hits                        
+                    },
+                "Schlatter7":
+                    {
+                        "start_time": str(Machine.query.filter_by(id='SCHL7').first().start_hour),
+                        "stop_time": str(Machine.query.filter_by(id='SCHL7').first().stop_time),
+                        "stops": Machine.query.filter_by(id='SCHL7').first().stops,
+                        "velocity": Machine.query.filter_by(id='SCHL7').first().velocity,
+                        "hits": Machine.query.filter_by(id='SCHL7').first().hits                      
+                    }                                                                                
+                }
+    new_data = json.dumps(new_data)
+    emit('table data', new_data, broadcast=False)
 
 def main():
     db.create_all()
@@ -70,5 +143,5 @@ def main():
 if __name__ == "__main__":
     with app.app_context():
         main()
-        #socketio.run(app)
-        app.run(host='127.0.0.2', port=5000, debug=True)
+        socketio.run(app)
+        #app.run(host='127.0.0.2', port=5000, debug=True)

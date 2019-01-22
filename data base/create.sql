@@ -28,9 +28,14 @@ SELECT email FROM users
 drop table users;
 
 update users set name = 'Braulio Gonzalez' where id = 2;
+
 UPDATE machines
-    SET start_hour = '10:30:00'
-    WHERE id = 'MG320';
+    SET start_hour = '12:30:00',
+        stop_time = '00:30:15',
+        stops = 5,
+        velocity = 79,
+        hits = 236
+    WHERE id = 'SCHL4';
 
 INSERT INTO production 
     (date, shift, machine, start_hour, stop_time, stops, hits)
@@ -42,3 +47,4 @@ delete from production where id >= 1;
 select * from machines; 
 select * from production; 
 select * from products;
+SELECT pg_reload_conf()

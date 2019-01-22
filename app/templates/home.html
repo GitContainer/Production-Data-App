@@ -39,15 +39,16 @@
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Datos</div>
                 <ul class="sidebar-menu list-unstyled">
                     <li class="sidebar-list-item"><a href="{{ url_for('home')}}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>PG12</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>EVG</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Jager</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>MG320</span></a></li>
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>PG12</span></a></li>
+                    <!-- <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>EVG</span></a></li> -->
+                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Jager</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 1</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 4</span></a></li>
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 5</span></a></li>
-                    <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 6</span></a></li>
+                    <!-- <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 6</span></a></li> -->
                     <li class="sidebar-list-item"><a href="charts.html" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Schlatter 7</span></a></li>
+                    <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Récord anual</span></a></li>                    
               </ul>
               <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Altas</div>
               <ul class="sidebar-menu list-unstyled">
@@ -80,59 +81,59 @@
                             <tbody>
                                 <tr>
                                     <th scope="row">MG320</th>
-                                    <td>10:30:05</td>
-                                    <td>3:25:33</td>
-                                    <td>15</td>
-                                    <td>87</td>
-                                    <td id="counter">0</td>
+                                    <td id="starttimeMG320"></td>
+                                    <td id="stoptimeMG320"></td>
+                                    <td id="stopsMG320"></td>
+                                    <td id="velMG320"></td>
+                                    <td id="hitsMG320"></td>
                                 </tr>                              
                                 <tr>
                                     <th scope="row">PG12</th>
-                                    <td>10:30:05</td>
-                                    <td>3:25:33</td>
-                                    <td>15</td>
-                                    <td>87</td>
-                                    <td>869</td>
+                                    <td id="starttimePG12"></td>
+                                    <td id="stoptimePG12"></td>
+                                    <td id="stopsPG12"></td>
+                                    <td id="velPG12"></td>
+                                    <td id="hitsPG12"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Jager</th>
-                                    <td>8:30:05</td>
-                                    <td>5:05:33</td>
-                                    <td>8</td>
-                                    <td>0</td>
-                                    <td>430</td>
+                                    <td id="starttimeJager"></td>
+                                    <td id="stoptimeJager"></td>
+                                    <td id="stopsJager"></td>
+                                    <td id="velJager"></td>
+                                    <td id="hitsJager"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Schlatter 1</th>
-                                    <td>7:45:00</td>
-                                    <td>00:05:00</td>
-                                    <td>2</td>
-                                    <td>95</td>
-                                    <td>2367</td>
+                                    <td id="starttimeSchlatter1"></td>
+                                    <td id="stoptimeSchlatter1"></td>
+                                    <td id="stopsSchlatter1"></td>
+                                    <td id="velSchlatter1"></td>
+                                    <td id="hitsSchlatter1"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Schlatter 4</th>
-                                    <td>10:30:05</td>
-                                    <td>3:25:33</td>
-                                    <td>15</td>
-                                    <td>87</td>
-                                    <td>869</td>
+                                    <td id="starttimeSchlatter4"></td>
+                                    <td id="stoptimeSchlatter4"></td>
+                                    <td id="stopsSchlatter4"></td>
+                                    <td id="velSchlatter4"></td>
+                                    <td id="hitsSchlatter4"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Schlatter 5</th>
-                                    <td>10:30:05</td>
-                                    <td>3:25:33</td>
-                                    <td>15</td>
-                                    <td>87</td>
-                                    <td>869</td>
+                                    <td id="starttimeSchlatter5"></td>
+                                    <td id="stoptimeSchlatter5"></td>
+                                    <td id="stopsSchlatter5"></td>
+                                    <td id="velSchlatter5"></td>
+                                    <td id="hitsSchlatter5"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Schlatter 7</th>
-                                    <td>10:30:05</td>
-                                    <td>3:25:33</td>
-                                    <td>15</td>
-                                    <td>87</td>
-                                    <td>869</td>
+                                    <td id="starttimeSchlatter7"></td>
+                                    <td id="stoptimeSchlatter7"></td>
+                                    <td id="stopsSchlatter7"></td>
+                                    <td id="velSchlatter7"></td>
+                                    <td id="hitsSchlatter7"></td>
                                 </tr>                                                                                                
                             </tbody>
                           </table>
@@ -165,6 +166,61 @@
         <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script src="{{ url_for('static', filename='js/front.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/home.js') }}"></script>       
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script> 
+        <!-- JavaScript code for autoupdating data-->
+        <script type="text/javascript" charset="utf-8">
+          var socket = io.connect('http://' + document.domain + ':' + location.port);
+          socket.on('connect', function() {
+            setInterval(count, 1500);
+          });
+            function count(){
+              socket.emit('refresh table data');
+          }
+          socket.on('table data', function(new_data) {
+            var json = JSON.parse(new_data);
+            // MG320 data gathering
+            document.querySelector('#starttimeMG320').innerHTML = json['MG320']['start_time'];
+            document.querySelector('#stoptimeMG320').innerHTML = json['MG320']['stop_time'];
+            document.querySelector('#stopsMG320').innerHTML = json['MG320']['stops'];
+            document.querySelector('#velMG320').innerHTML = json['MG320']['velocity'];
+            document.querySelector('#hitsMG320').innerHTML = json['MG320']['hits'];
+            // PG12 data gathering
+            document.querySelector('#starttimePG12').innerHTML = json['PG12']['start_time'];
+            document.querySelector('#stoptimePG12').innerHTML = json['PG12']['stop_time'];
+            document.querySelector('#stopsPG12').innerHTML = json['PG12']['stops'];
+            document.querySelector('#velPG12').innerHTML = json['PG12']['velocity'];
+            document.querySelector('#hitsPG12').innerHTML = json['PG12']['hits'];
+            // Jager data gathering
+            document.querySelector('#starttimeJager').innerHTML = json['Jager']['start_time'];
+            document.querySelector('#stoptimeJager').innerHTML = json['Jager']['stop_time'];
+            document.querySelector('#stopsJager').innerHTML = json['Jager']['stops'];
+            document.querySelector('#velJager').innerHTML = json['Jager']['velocity'];
+            document.querySelector('#hitsJager').innerHTML = json['Jager']['hits'];
+            // Schlatter 1 data gathering
+            document.querySelector('#starttimeSchlatter1').innerHTML = json['Schlatter1']['start_time'];
+            document.querySelector('#stoptimeSchlatter1').innerHTML = json['Schlatter1']['stop_time'];
+            document.querySelector('#stopsSchlatter1').innerHTML = json['Schlatter1']['stops'];
+            document.querySelector('#velSchlatter1').innerHTML = json['Schlatter1']['velocity'];
+            document.querySelector('#hitsSchlatter1').innerHTML = json['Schlatter1']['hits'];
+            // Schlatter 4 data gathering
+            document.querySelector('#starttimeSchlatter4').innerHTML = json['Schlatter4']['start_time'];
+            document.querySelector('#stoptimeSchlatter4').innerHTML = json['Schlatter4']['stop_time'];
+            document.querySelector('#stopsSchlatter4').innerHTML = json['Schlatter4']['stops'];
+            document.querySelector('#velSchlatter4').innerHTML = json['Schlatter4']['velocity'];
+            document.querySelector('#hitsSchlatter4').innerHTML = json['Schlatter4']['hits'];
+            // Schlatter 5 data gathering
+            document.querySelector('#starttimeSchlatter5').innerHTML = json['Schlatter5']['start_time'];
+            document.querySelector('#stoptimeSchlatter5').innerHTML = json['Schlatter5']['stop_time'];
+            document.querySelector('#stopsSchlatter5').innerHTML = json['Schlatter5']['stops'];
+            document.querySelector('#velSchlatter5').innerHTML = json['Schlatter5']['velocity'];
+            document.querySelector('#hitsSchlatter5').innerHTML = json['Schlatter5']['hits'];
+            // Schlatter 7 data gathering
+            document.querySelector('#starttimeSchlatter7').innerHTML = json['Schlatter7']['start_time'];
+            document.querySelector('#stoptimeSchlatter7').innerHTML = json['Schlatter7']['stop_time'];
+            document.querySelector('#stopsSchlatter7').innerHTML = json['Schlatter7']['stops'];
+            document.querySelector('#velSchlatter7').innerHTML = json['Schlatter7']['velocity'];
+            document.querySelector('#hitsSchlatter7').innerHTML = json['Schlatter7']['hits'];                        
+          });
+      </script>    
     </body>
 </html>
