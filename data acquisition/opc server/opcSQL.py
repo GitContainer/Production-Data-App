@@ -235,6 +235,15 @@ def timer(inicial_value, preset_value):
         return True
     return False
 
+def emptyTable(cur):
+    query = """UPDATE machines
+                SET hits = 0,
+                velocity = 0,
+                stops = 0,
+                stop_time = '00:00:00',
+                start_hour = null"""
+    cur.execute(query)
+
 if __name__=="__main__":
     t = time()
     log = open("log.txt", 'a+')
@@ -254,9 +263,11 @@ if __name__=="__main__":
                     conn.commit()
                     if endOfShift(plc) or timer(t, 33000):
                         break
+                    sleep(1)
                 storeData(cur, shift, starts, stoptimes, stops, hits)
                 conn.commit()
                 AKS(plc)
+                emptyTable(cur)
                 closeSQL(conn, cur)
             except:
                 log.write("Connection lost")

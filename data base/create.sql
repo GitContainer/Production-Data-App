@@ -34,8 +34,8 @@ UPDATE machines
         stop_time = '00:30:15',
         stops = 5,
         velocity = 79,
-        hits = 456
-    WHERE id = 'SCHL4';
+        hits = 225
+    WHERE id = '5S07';
 
 INSERT INTO production 
     (date, shift, machine, start_hour, stop_time, stops, hits)
@@ -47,4 +47,11 @@ delete from production where id >= 1;
 select * from machines; 
 select * from production; 
 select * from products;
-SELECT pg_reload_conf()
+SELECT pg_reload_conf();
+
+UPDATE machines
+    SET hits = 0,
+        velocity = 0,
+        stops = 0,
+        stop_time = '00:00:00',
+        start_hour = null
