@@ -222,12 +222,17 @@ def getShift(plc):
         return 1
     elif ReadMemory(plc, 0, 1, S7WLBit):
         return 3
+    else:
+        return 0
 
 def endOfShift(plc):
     return ReadMemory(plc, 1, 1, S7WLBit)   
 
 def AKS(plc):
     WriteMemory(plc, 0, 7, S7WLBit, True)
+
+def resetAKS(plc):
+    WriteMemory(plc, 0, 7, S7WLBit, False)
 
 def timer(inicial_value, preset_value):
     elapsed = round(time() - inicial_value, 2)
@@ -245,39 +250,46 @@ def emptyTable(cur):
     cur.execute(query)
 
 if __name__=="__main__":
-    t = time()
     log = open("log.txt", 'a+')
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
-        conn, cur = connectSQL("postgres", "Autom2018", "localhost", "production_data")
-        if conn:
-            try:
-                shift = getShift(plc)
-                while True:
-                    starts = checkStart(plc)
-                    hits = gatherProductionData(plc)
-                    stoptimes = gatherStopTime(plc)
-                    velocities = gatherVelocities(plc)
-                    stops = gatherStops(plc)
-                    uploadData(cur, starts, stoptimes, stops, velocities, hits)
-                    conn.commit()
-                    if endOfShift(plc) or timer(t, 33000):
-                        break
-                    sleep(1)
-                storeData(cur, shift, starts, stoptimes, stops, hits)
-                conn.commit()
-                AKS(plc)
-                emptyTable(cur)
-                closeSQL(conn, cur)
-            except:
-                log.write("Connection lost")
-                log.write("\n")
-        else:
-            log.write(str(cur))
-            log.write("\n")
+        while True:
+            if getShift(plc) != 0:
+                t = time()
+                conn, cur = connectSQL("postgres", "Autom2018", "localhost", "production_data")
+                if conn:
+                    try:
+                        shift = getShift(plc)
+                        while True:
+                            starts = checkStart(plc)
+                            hits = gatherProductionData(plc)
+                            stoptimes = gatherStopTime(plc)
+                            velocities = gatherVelocities(plc)
+                            stops = gatherStops(plc)
+                            uploadData(cur, starts, stoptimes, stops, velocities, hits)
+                            conn.commit()
+                            if endOfShift(plc) or timer(t, 33000):
+                                break
+                            sleep(1)
+                        storeData(cur, shift, starts, stoptimes, stops, hits)
+                        conn.commit()
+                        AKS(plc)
+                        while endOfShift(plc):
+                            pass
+                        resetAKS(plc)
+                        emptyTable(cur)
+                        closeSQL(conn, cur)
+                    except:
+                        log.write("Connection lost")
+                        log.write("\n")
+                else:
+                    log.write(str(cur))
+                    log.write("\n")
+            else:
+                sleep(30)
     else:
         log.write(statusPLC)
         log.write("\n")
     log.close()
 
-    
+        

@@ -167,15 +167,13 @@ def get_anual_production():
         D[row.id] = d
         del d
     new_data = json.dumps(D)
-    print(new_data)
     emit('annual production', new_data, broadcast=False)
 
 @socketio.on('request MG320 data')
 @cached()
 def get_MG320_data():
-    D = {'key': [456,456,456,456,456,456,456,12000,456,456]}
-    new_data = json.dumps(D)
-    emit('MG320 data', new_data, broadcast=False)
+    hits = Machine.query.filter_by(id='MG320').first().hits
+    emit('MG320 data', hits, broadcast=False)
 
 def main():
     db.create_all()

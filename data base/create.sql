@@ -55,3 +55,5 @@ UPDATE machines
         stops = 0,
         stop_time = '00:00:00',
         start_hour = null
+
+SELECT * FROM pg_stat_activity;
