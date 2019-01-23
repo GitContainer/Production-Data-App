@@ -12,7 +12,7 @@
           </h6>
         </div>
         <div class="card-body">
-          <table class="table card-text">
+          <table id="myTable" class="table card-text">
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -24,64 +24,7 @@
                 <th>Golpes</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- <tr>
-                <th scope="row"></th>
-                <td id="starttimeMG320"></td>
-                <td id="stoptimeMG320"></td>
-                <td id="stopsMG320"></td>
-                <td id="velMG320"></td>
-                <td id="hitsMG320"></td>
-              </tr>
-              <tr>
-                <th scope="row"></th>
-                <td id="starttimePG12"></td>
-                <td id="stoptimePG12"></td>
-                <td id="stopsPG12"></td>
-                <td id="velPG12"></td>
-                <td id="hitsPG12"></td>
-              </tr>
-              <tr>
-                <th scope="row"></th>
-                <td id="starttimeJager"></td>
-                <td id="stoptimeJager"></td>
-                <td id="stopsJager"></td>
-                <td id="velJager"></td>
-                <td id="hitsJager"></td>
-              </tr>
-              <tr>
-                <th scope="row"></th>
-                <td id="starttimeSchlatter1"></td>
-                <td id="stoptimeSchlatter1"></td>
-                <td id="stopsSchlatter1"></td>
-                <td id="velSchlatter1"></td>
-                <td id="hitsSchlatter1"></td>
-              </tr>
-              <tr>
-                <th scope="row"></th>
-                <td id="starttimeSchlatter4"></td>
-                <td id="stoptimeSchlatter4"></td>
-                <td id="stopsSchlatter4"></td>
-                <td id="velSchlatter4"></td>
-                <td id="hitsSchlatter4"></td>
-              </tr>
-              <tr>
-                <th scope="row"></th>
-                <td id="starttimeSchlatter5"></td>
-                <td id="stoptimeSchlatter5"></td>
-                <td id="stopsSchlatter5"></td>
-                <td id="velSchlatter5"></td>
-                <td id="hitsSchlatter5"></td>
-              </tr>
-              <tr>
-                <th scope="row"></th>
-                <td id="starttimeSchlatter7"></td>
-                <td id="stoptimeSchlatter7"></td>
-                <td id="stopsSchlatter7"></td>
-                <td id="velSchlatter7"></td>
-                <td id="hitsSchlatter7"></td>
-              </tr> -->
-            </tbody>
+            <tbody></tbody>
           </table>
         </div>
       </div>
@@ -97,7 +40,15 @@
   });
 
   socket.on('annual production', function(new_data) {
-    // var json = JSON.parse(new_data);          
+    var table = document.getElementById("myTable");
+    var json = JSON.parse(new_data);
+    for(var k in json) {
+      var row = table.insertRow(-1);
+      for(var l in json[k]) {
+        var cell = row.insertCell(-1);
+        cell.innerHTML = json[k][l];
+      }
+    }
   });
 </script>
 {% endblock %}

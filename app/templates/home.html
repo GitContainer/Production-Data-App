@@ -42,7 +42,7 @@
                     <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#machines" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Máquinas</span></a>
                       <div id="machines" class="collapse">
                         <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
-                          <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">MG320</a></li>
+                          <li class="sidebar-list-item"><a href="{{ url_for('MG320')}}" class="sidebar-link text-muted pl-lg-5">MG320</a></li>
                           <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">PG12</a></li>
                           <!-- <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">EVG</a></li> -->
                           <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted pl-lg-5">Jager</a></li>
@@ -181,9 +181,9 @@
         <script type="text/javascript" charset="utf-8">
           var socket = io.connect('http://' + document.domain + ':' + location.port);
           socket.on('connect', function() {
-            setInterval(count, 1500);
+            setInterval(update, 1500);
           });
-            function count(){
+            function update(){
               socket.emit('refresh table data');
           }
           socket.on('table data', function(new_data) {

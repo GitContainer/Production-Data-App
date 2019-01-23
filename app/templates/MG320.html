@@ -1,0 +1,162 @@
+{% extends "home.html" %}
+
+{% block body %}
+<section class="py-5">
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h6 mb-0 text-uppercase">Producción por hora</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-holder mt-5 mb-5">
+                        <canvas id="PPH" style="height: 370px; width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Hora de inicio</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-holder">
+                        <canvas id="lineCahrtsm1"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Número de paros</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-holder">
+                        <canvas id="barChartExample"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Último paro</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-holder">
+                        <canvas id="pieChart1"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Tiempo en paro</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-holder">
+                        <canvas id="pieChart2"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-holder mt-5 mb-5">
+                        <canvas id="lineChartExample"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+<script>
+    window.onload = function () {
+        var date = new Date();
+        var utcDate = new Date(date.toUTCString());
+        hour = utcDate.getHours();
+        minute = utcDate.getMinutes();
+        if (7 <= hour && hour <= 17) {
+            if ((hour == 7 && minute >= 30) || (hour == 17 && minute <= 30)) {
+                var labels = ["7:30 - 8:30", "8:30 - 9:30", "9:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30", "12:30 - 13:30", "13:30 - 14:30", "14:30 - 15:30", "15:30 - 16:30", "16:30 - 17:30"];
+            }
+        }
+        else {
+            var labels = ["21:30 - 22:30", "22:30 - 23:30", "23:30 - 00:30", "00:30 - 1:30", "1:30 - 2:30", "2:30 - 3:30", "3:30 - 4:30", "4:30 - 5:30", "5:30 - 6:30", "6:30 - 7:30"];
+        }
+        var c1 = document.getElementById("PPH").getContext('2d');
+        var chartPPH = new Chart(c1, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Golpes',
+                    data: [526, 4561, 235, 846, 3468, 5236, 10800, 456, 357, 159],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    labels: {
+                        boxWidth: 0 
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 12000
+                        }
+                    }]
+                }
+            }
+        });
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function () {
+            setInterval(update, 1500);
+        });
+        function update() {
+            socket.emit('request MG320 data');
+        }
+        socket.on('MG320 data', function (new_data) {
+            var json = JSON.parse(new_data);
+            chartPPH.data.datasets[0].data = json["key"];
+            chartPPH.update()
+        });
+    }
+</script>
+{% endblock %}

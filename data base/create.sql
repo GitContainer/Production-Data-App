@@ -39,7 +39,7 @@ UPDATE machines
 
 INSERT INTO production 
     (date, shift, machine, start_hour, stop_time, stops, hits)
-    VALUES ('19/01/2019', 1, 'Schlatter 5', '9:30:05', '3:20:15', 50, 549);
+    VALUES ('19/01/2019', 1, 'Schlatter 1', '8:50:05', '8:40:15', 40, 629);
 
 delete from production where id >= 1;
 

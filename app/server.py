@@ -64,6 +64,11 @@ def home():
 def record():
     return render_template('record.html')
 
+@app.route("/MG320", methods=['GET'])
+@login_required
+def MG320():
+    return render_template('MG320.html')
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -164,6 +169,13 @@ def get_anual_production():
     new_data = json.dumps(D)
     print(new_data)
     emit('annual production', new_data, broadcast=False)
+
+@socketio.on('request MG320 data')
+@cached()
+def get_MG320_data():
+    D = {'key': [456,456,456,456,456,456,456,12000,456,456]}
+    new_data = json.dumps(D)
+    emit('MG320 data', new_data, broadcast=False)
 
 def main():
     db.create_all()
