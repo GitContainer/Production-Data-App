@@ -18,7 +18,6 @@ machines_status = {"SCHL4": False,
 
 start_times = {}
 
-
 def ReadMemory(plc, byte, bit, datatype):
     result = plc.read_area(areas['MK'], 0, byte, datatype)
     if datatype == S7WLBit:
@@ -32,7 +31,6 @@ def ReadMemory(plc, byte, bit, datatype):
     else:
         return None
 
-
 def WriteMemory(plc, byte, bit, datatype, value):
     result = plc.read_area(areas['MK'], 0, byte, datatype)
     if datatype == S7WLBit:
@@ -45,7 +43,6 @@ def WriteMemory(plc, byte, bit, datatype, value):
         set_dword(result, 0, value)
     plc.write_area(areas["MK"], 0, byte, result)
 
-
 def connectPLC(ipadress):
     plc = c.Client()
     try:
@@ -57,7 +54,6 @@ def connectPLC(ipadress):
             return (plc, "Connected")
         else:
             return (plc, "Error: Unknown")
-
 
 def gatherProductionData(plc):
     Sch4 = ReadMemory(plc, 28, 0, S7WLDWord)
@@ -77,7 +73,6 @@ def gatherProductionData(plc):
                            "5S07": PG12}
     return machines_production
 
-
 def gatherStopTime(plc):
     Sch4 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 60, 0, S7WLDWord)))
     Sch5 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 64, 0, S7WLDWord)))
@@ -95,7 +90,6 @@ def gatherStopTime(plc):
                          "MG320": MG320,
                          "5S07": PG12}
     return machines_stoptime
-
 
 def gatherVelocities(plc):
     Sch4 = float(ReadMemory(plc, 32, 0, S7WLDWord))
@@ -129,7 +123,6 @@ def gatherVelocities(plc):
                            "5S07": PG12}
     return machines_velocities
 
-
 def gatherStops(plc):
     Sch4 = ReadMemory(plc, 108, 0, S7WLWord)
     Sch5 = ReadMemory(plc, 110, 0, S7WLWord)
@@ -147,7 +140,6 @@ def gatherStops(plc):
                       "MG320": MG320,
                       "5S07": PG12}
     return machines_stops
-
 
 def checkStart(plc):
     Sch4 = ReadMemory(plc, 106, 0, S7WLBit)
@@ -169,7 +161,6 @@ def checkStart(plc):
                       "SCHL6": False}
     return machines_start
 
-
 def connectSQL(user, password, host, database):
     conn = None
     try:
@@ -181,11 +172,9 @@ def connectSQL(user, password, host, database):
     else:
         return (conn, cur)
 
-
 def closeSQL(conn, cur):
     cur.close()
     conn.close()
-
 
 def uploadData(cur, starts, stoptimes, stops, velocities, hits):
     for key in machines_status.keys():
@@ -199,17 +188,13 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits):
                 cur.execute(query, values)
             hourx = getHourPos()
             if hourx != -1:
-                query = """UPDATE machines 
-                            SET stop_time = %s,
-                                stops = %s,
-                                velocity = %s,
-                                hits = %s,
-                                %s = %s,
-                            WHERE id = %s"""
+                query = getQuery(hourx)
                 values = (stoptimes[key], stops[key],
-                        velocities[key], hits[key], hourx, hits[key], key)
-                cur.execute(query, values)
-
+                          velocities[key], hits[key], hits[key], key)
+                try:
+                    cur.execute(query, values)
+                except:
+                    raise ValueError('Bad query')
 
 def storeData(cur, shift, starts, stoptimes, stops, hits):
     date = dt.strftime("%A %d/%m/%Y")
@@ -223,7 +208,6 @@ def storeData(cur, shift, starts, stoptimes, stops, hits):
                       start_times[key], stoptimes[key], stops[key], hits[key])
             cur.execute(query, values)
 
-
 def getMachine(id):
     D = {"SCHL4": "Schlatter 4",
          "SCHL5": "Schlatter 5",
@@ -236,7 +220,6 @@ def getMachine(id):
          "SCHL6": "Schlatter 6"}
     return D[id]
 
-
 def getShift(plc):
     if ReadMemory(plc, 0, 0, S7WLBit):
         return 1
@@ -245,18 +228,14 @@ def getShift(plc):
     else:
         return 0
 
-
 def endOfShift(plc):
     return ReadMemory(plc, 1, 1, S7WLBit)
-
 
 def AKS(plc):
     WriteMemory(plc, 0, 7, S7WLBit, True)
 
-
 def resetAKS(plc):
     WriteMemory(plc, 0, 7, S7WLBit, False)
-
 
 def emptyTable(cur):
     query = """UPDATE machines
@@ -264,9 +243,18 @@ def emptyTable(cur):
                 velocity = 0,
                 stops = 0,
                 stop_time = '00:00:00',
-                start_hour = null"""
+                start_hour = null,
+                hour0 = 0,
+                hour1 = 0,
+                hour2 = 0,
+                hour3 = 0,
+                hour4 = 0,
+                hour5 = 0,
+                hour6 = 0,
+                hour7 = 0,
+                hour8 = 0,
+                hour9 = 0"""
     cur.execute(query)
-
 
 def getHourPos():
     now = datetime.now()
@@ -288,6 +276,88 @@ def getHourPos():
             break
     return res
 
+def getQuery(hourx):
+    if hourx == "hour0":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour0 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour1":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour1 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour2":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour2 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour3":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour3 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour4":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour4 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour5":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour5 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour6":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour6 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour7":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour7 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour8":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour8 = %s
+                    WHERE id = %s"""
+    elif hourx == "hour9":
+        query = """UPDATE machines 
+                            SET stop_time = %s,
+                                stops = %s,
+                                velocity = %s,
+                                hits = %s,
+                                hour9 = %s
+                    WHERE id = %s"""
+    return query
 
 if __name__ == "__main__":
     log = open("log.txt", 'a+')
@@ -298,41 +368,37 @@ if __name__ == "__main__":
                 conn, cur = connectSQL(
                     "postgres", "Autom2018", "localhost", "production_data")
                 if conn:
-                    try:
-                        emptyTable(cur)
+                    shift = getShift(plc)
+                    while True:
+                        starts = checkStart(plc)
+                        hits = gatherProductionData(plc)
+                        stoptimes = gatherStopTime(plc)
+                        velocities = gatherVelocities(plc)
+                        stops = gatherStops(plc)
+                        uploadData(cur, starts, stoptimes,
+                                   stops, velocities, hits)
                         conn.commit()
-                        shift = getShift(plc)
-                        while True:
-                            starts = checkStart(plc)
-                            hits = gatherProductionData(plc)
-                            stoptimes = gatherStopTime(plc)
-                            velocities = gatherVelocities(plc)
-                            stops = gatherStops(plc)
-                            uploadData(cur, starts, stoptimes,
-                                       stops, velocities, hits)
-                            conn.commit()
-                            if endOfShift(plc):
-                                break
-                            sleep(1)
-                        storeData(cur, shift, starts, stoptimes, stops, hits)
-                        conn.commit()
-                        AKS(plc)
-                        while endOfShift(plc):
-                            pass
-                        resetAKS(plc)
-                        closeSQL(conn, cur)
-                        machines_status = {"SCHL4": False,
-                                           "SCHL5": False,
-                                           "SCHL7": False,
-                                           "JAGER": False,
-                                           "SCHL1": False,
-                                           "MG320": False,
-                                           "5S07": False,
-                                           "EVG": False,
-                                           "SCHL6": False}
-                    except:
-                        log.write("Connection lost")
-                        log.write("\n")
+                        if endOfShift(plc) == 1:
+                            break
+                        sleep(1)
+                    storeData(cur, shift, starts, stoptimes, stops, hits)
+                    conn.commit()
+                    AKS(plc)
+                    while endOfShift(plc) == 1:
+                        pass
+                    resetAKS(plc)
+                    emptyTable(cur)
+                    conn.commit()
+                    closeSQL(conn, cur)
+                    machines_status = {"SCHL4": False,
+                                       "SCHL5": False,
+                                       "SCHL7": False,
+                                       "JAGER": False,
+                                       "SCHL1": False,
+                                       "MG320": False,
+                                       "5S07": False,
+                                       "EVG": False,
+                                       "SCHL6": False}
                 else:
                     log.write(str(cur))
                     log.write("\n")

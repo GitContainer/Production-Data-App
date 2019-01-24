@@ -15,7 +15,8 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:Autom2018@localhost/production_data'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_POOL_SIZE"] = 150
-app.config["SQLALCHEMY_MAX_OVERFLOW"] = 500
+app.config["SQLALCHEMY_MAX_OVERFLOW"] = 150
+app.config["SQLALCHEMY_POOL_TIMEOUT"] = 300
 db = SQLAlchemy(app)
 db.create_all()
 login_manager = LoginManager(app)

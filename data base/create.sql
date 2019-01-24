@@ -56,8 +56,6 @@ UPDATE machines
         stop_time = '00:00:00',
         start_hour = null
 
-SELECT * FROM pg_stat_activity;
-
 ALTER TABLE machines
     ADD COLUMN hour0 INTEGER NOT NULL DEFAULT 0,
     ADD COLUMN hour1 INTEGER NOT NULL DEFAULT 0,
@@ -83,4 +81,15 @@ UPDATE machines
         hour9 = 28856
     WHERE id = 'MG320';
 select * from machines;
-select count(*) from pg_stat_activity;
+
+SELECT pg_terminate_backend(23156);
+
+SELECT count(*) FROM pg_stat_activity;
+
+UPDATE machines 
+    SET stop_time = '8:32:35',
+        stops = 98,
+        velocity = 97,
+        hits = 500,
+        hour0 = 500
+    WHERE id = 'MG320'
