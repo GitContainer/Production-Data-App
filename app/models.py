@@ -29,6 +29,16 @@ class Machine(db.Model):
     stops = db.Column(db.Integer, nullable=True)
     velocity = db.Column(db.Integer, nullable=True)
     hits = db.Column(db.Integer, nullable=True, default=0)
+    hour0 = db.Column(db.Integer, nullable=False, default=0)
+    hour1 = db.Column(db.Integer, nullable=False, default=0)
+    hour2 = db.Column(db.Integer, nullable=False, default=0)
+    hour3 = db.Column(db.Integer, nullable=False, default=0)
+    hour4 = db.Column(db.Integer, nullable=False, default=0)
+    hour5 = db.Column(db.Integer, nullable=False, default=0)
+    hour6 = db.Column(db.Integer, nullable=False, default=0)
+    hour7 = db.Column(db.Integer, nullable=False, default=0)
+    hour8 = db.Column(db.Integer, nullable=False, default=0)
+    hour9 = db.Column(db.Integer, nullable=False, default=0)
 
 class Production(db.Model):
     __tablename__ = "production"

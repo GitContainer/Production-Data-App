@@ -173,50 +173,30 @@
             setInterval(update, 1500);
         });
         function update() {
-            socket.emit('request MG320 data');
+            socket.emit('getData');
         }
-        socket.on('MG320 data', function (new_data) {
-            // var json = JSON.parse(new_data);
-            date = new Date();
-            utcDate = new Date(date.toUTCString());
-            hour = utcDate.getHours();
-            minute = utcDate.getMinutes();
-            pos = getHourPos(hour, minute);
-            console.log(pos)
-            sum = sumBefore(hits, pos);
-            hits[pos] = new_data - sum;
-            chartPPH.data.datasets[0].data = hits;
+        socket.on('new_data', function (new_data) {
+            var json = JSON.parse(new_data);
+            var start_time = json['MG320']['start_time'];
+            var stop_time = json['MG320']['stop_time'];
+            var stops = json['MG320']['stops'];
+            var array = [json['MG320']['hour0'], json['MG320']['hour1'], json['MG320']['hour2'], json['MG320']['hour3'], json['MG320']['hour4'], json['MG320']['hour5'], json['MG320']['hour6'], json['MG320']['hour7'], json['MG320']['hour8'], json['MG320']['hour9']];
+            data = getDifference(array);
+            chartPPH.data.datasets[0].data = data;
             chartPPH.update()
         });
     }
-    function sumBefore(array, position) {
-        var sum = 0;
-        for (i = 0; i < position; i++) {
-            sum += array[i];
-        }
-        return sum;
-    }
-    function getHourPos(hour, minute) {
-        hours = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
-        var res = 0;
-        for (i = 0; i < 11; i++) {
-            if (hour == hours[i] || hour == hours[i] + 14) {
-                if (minute >= 30) {
-                    res = i;
-                    break;
-                }
-                else {
-                    res = i - 1;
-                    break;
-                }
+    function getDifference(array) {
+        var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        for (i = 0; i < array.length; i++) {
+            if(i == 0){
+                data[i] = array[i];
+            }
+            else if(array[i] != 0){
+                data[i] = array[i] - array[i-1];
             }
         }
-        if (res == 0) {
-            return -2;
-        }
-        else {
-            return res;
-        }
+        return data;
     }
     function graphLine() {
         lineValue = document.getElementById('goal').value;

@@ -34,7 +34,7 @@ UPDATE machines
         stop_time = '00:30:15',
         stops = 5,
         velocity = 79,
-        hits = 225
+        hits = 245
     WHERE id = '5S07';
 
 INSERT INTO production 
@@ -44,7 +44,7 @@ INSERT INTO production
 delete from production where id >= 1;
 
 -- ALTER TABLE production ALTER COLUMN date TYPE VARCHAR;
-select * from machines; 
+ 
 select * from production; 
 select * from products;
 SELECT pg_reload_conf();
@@ -57,3 +57,30 @@ UPDATE machines
         start_hour = null
 
 SELECT * FROM pg_stat_activity;
+
+ALTER TABLE machines
+    ADD COLUMN hour0 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour1 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour2 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour3 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour4 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour5 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour6 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour7 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour8 INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN hour9 INTEGER NOT NULL DEFAULT 0;
+
+UPDATE machines 
+    SET hour0 = 3000, 
+        hour1 = 6500, 
+        hour2 = 9300, 
+        hour3 = 12600, 
+        hour4 = 15000, 
+        hour5 = 17000, 
+        hour6 = 21320, 
+        hour7 = 23200, 
+        hour8 = 25000,  
+        hour9 = 28856
+    WHERE id = 'MG320';
+select * from machines;
+select count(*) from pg_stat_activity;

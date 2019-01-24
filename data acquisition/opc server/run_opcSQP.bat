@@ -1,1 +1,2 @@
-C:/Python27/python.exe opcSQL.py
+@echo off
+C:/Python27/python.exe opcSQL.py >> logBat.txt

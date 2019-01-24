@@ -184,9 +184,9 @@
             setInterval(update, 1500);
           });
             function update(){
-              socket.emit('refresh table data');
+              socket.emit('getData');
           }
-          socket.on('table data', function(new_data) {
+          socket.on('new_data', function(new_data) {
             var json = JSON.parse(new_data);
             // MG320 data gathering
             document.querySelector('#starttimeMG320').innerHTML = json['MG320']['start_time'];
