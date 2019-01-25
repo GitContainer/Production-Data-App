@@ -73,6 +73,43 @@ def gatherProductionData(plc):
                            "5S07": PG12}
     return machines_production
 
+def gatherStartTime(plc, machine):
+    if machine == "SCHL4":
+        hour = ReadMemory(plc, 146, 0, S7WLWord)
+        minute = ReadMemory(plc, 148, 0, S7WLWord)
+        second = ReadMemory(plc, 150, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+    elif machine == "SCHL5":
+        hour = ReadMemory(plc, 152, 0, S7WLWord)
+        minute = ReadMemory(plc, 154, 0, S7WLWord)
+        second = ReadMemory(plc, 156, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+    elif machine == "SCHL7":
+        hour = ReadMemory(plc, 158, 0, S7WLWord)
+        minute = ReadMemory(plc, 160, 0, S7WLWord)
+        second = ReadMemory(plc, 162, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+    elif machine == "JAGER":
+        hour = ReadMemory(plc, 134, 0, S7WLWord)
+        minute = ReadMemory(plc, 136, 0, S7WLWord)
+        second = ReadMemory(plc, 138, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+    elif machine == "SCHL1":
+        hour = ReadMemory(plc, 140, 0, S7WLWord)
+        minute = ReadMemory(plc, 142, 0, S7WLWord)
+        second = ReadMemory(plc, 144, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+    elif machine == "MG320":
+        hour = ReadMemory(plc, 122, 0, S7WLWord)
+        minute = ReadMemory(plc, 124, 0, S7WLWord)
+        second = ReadMemory(plc, 126, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+    elif machine == "5S07":
+        hour = ReadMemory(plc, 128, 0, S7WLWord)
+        minute = ReadMemory(plc, 130, 0, S7WLWord)
+        second = ReadMemory(plc, 132, 0, S7WLWord)
+        return datetime.time(hour, minute, second)
+
 def gatherStopTime(plc):
     Sch4 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 60, 0, S7WLDWord)))
     Sch5 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 64, 0, S7WLDWord)))
@@ -184,7 +221,7 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour):
         if key != "SCHL6" and key != "EVG":
             if machines_status[key] == False and starts[key] == True:
                 machines_status[key] = True
-                start_times[key] = hour
+                start_times[key] = str(gatherStartTime(plc, key))
                 query = ('UPDATE machines SET start_hour = %s where id = %s')
                 values = (hour, key)
                 cur.execute(query, values)
