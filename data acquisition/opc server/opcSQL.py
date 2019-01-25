@@ -408,3 +408,6 @@ if __name__ == "__main__":
         log.write(statusPLC)
         log.write("\n")
     log.close()
+
+
+# str(datetime.timedelta(seconds=3605))

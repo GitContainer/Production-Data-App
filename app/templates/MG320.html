@@ -52,7 +52,7 @@
                 <div class="card-header">
                     <h2 class="h6 text-uppercase mb-0">Hora de inicio</h2>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="text-align:center;">
                     <label id="start_time" style="font-size: 60px; margin-top: -12px;
                         margin-bottom: 0px;"><b></b></label>
                 </div>
@@ -78,7 +78,7 @@
                 </div>
                 <div class="card-body">
                     <div class="chart-holder mt-5 mb-5">
-                        <canvas id="lineChartExample"></canvas>
+                        <canvas id="Velocities" style="height: 370px; width: 100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -91,6 +91,7 @@
 <script src="{{ url_for('static', filename='js/chartjs-plugin-annotation.js') }}"></script>
 <script>
     var chartPPH;
+    var chartVel;
     var lineValue = 0;
     window.onload = function () {
         var date = new Date();
@@ -109,7 +110,11 @@
             var labels = ["21:30 - 22:30", "22:30 - 23:30", "23:30 - 00:30", "00:30 - 1:30", "1:30 - 2:30", "2:30 - 3:30", "3:30 - 4:30", "4:30 - 5:30", "5:30 - 6:30", "6:30 - 7:30"];
         }
         var hits = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        var velocities = [0];
+        var timeline = [0];
         var c1 = document.getElementById("PPH").getContext('2d');
+        var c2 = document.getElementById("Velocities").getContext('2d');
+
         chartPPH = new Chart(c1, {
             type: 'bar',
             data: {
@@ -155,7 +160,7 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true,
-                            max: 12000
+                            max: 6000
                         }
                     }]
                 },
@@ -172,12 +177,42 @@
                 }
             }
         });
+        chartVel = new Chart(c2, {
+            type: 'line',
+            data: {
+                labels: timeline,
+                datasets: [{
+                    label: 'Golpes por minuto',
+                    data: velocities,
+                    backgroundColor: 'rgba(144, 238, 144, 0.4)'
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 15
+                        }
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true,
+                            max: 120
+                        }
+                    }]
+                }
+            }
+        });
+
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('connect', function () {
             setInterval(update, 1500);
         });
         function update() {
             socket.emit('getData');
+            socket.emit('getVelocities');
         }
         socket.on('new_data', function (new_data) {
             var json = JSON.parse(new_data);
@@ -193,6 +228,18 @@
             document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
             document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
             document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
+        });
+        socket.on('new_velocities', function (new_velocities) {
+            var json_vel = JSON.parse(new_velocities);
+            timeline = [];
+            velocities = [];
+            for (var k in json_vel) {
+                timeline.push(json_vel[k].timestamp);
+                velocities.push(json_vel[k].mg320);
+            }
+            chartVel.data.labels = timeline;
+            chartVel.data.datasets[0].data = velocities;
+            chartVel.update();
         });
     }
     function getDifference(array) {

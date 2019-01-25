@@ -18,7 +18,6 @@ app.config["SQLALCHEMY_POOL_SIZE"] = 150
 app.config["SQLALCHEMY_MAX_OVERFLOW"] = 150
 app.config["SQLALCHEMY_POOL_TIMEOUT"] = 300
 db = SQLAlchemy(app, session_options={'autocommit': True})
-db.create_all()
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
@@ -239,7 +238,6 @@ def refreshData():
     new_data = json.dumps(new_data)
     emit('new_data', new_data, broadcast=False)
 
-
 @socketio.on('get annual production')
 @cached()
 def get_anual_production():
@@ -259,5 +257,29 @@ def get_anual_production():
     new_data = json.dumps(D)
     emit('annual production', new_data, broadcast=False)
 
+@socketio.on('getVelocities')
+@cached()
+def getVelocities():
+    velocities = Velocity.query.all()
+    D = {}
+    i = 0
+    for row in velocities:
+        d = {}
+        d["timestamp"] = str(row.timestamp)
+        d["mg320"] = row.mg320
+        d["pg12"] = row.pg12
+        d["jager"] = row.jager
+        d["schl1"] = row.schl1
+        d["schl4"] = row.schl4
+        d["schl5"] = row.schl5
+        d["schl7"] = row.schl7
+        row_number = "row" + str(i)
+        i += 1
+        D[row_number] = d
+        del d
+    new_velocities = json.dumps(D)
+    emit('new_velocities', new_velocities, broadcast=False)
+
 if __name__ == "__main__":
+    # db.create_all()
     socketio.run(app)

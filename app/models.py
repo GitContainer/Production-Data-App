@@ -50,3 +50,16 @@ class Production(db.Model):
     stop_time = db.Column(db.Time, nullable=True) 
     stops = db.Column(db.Integer, nullable=True)
     hits = db.Column(db.Integer, nullable=False, default=0)
+
+class Velocity(db.Model):
+    __tablename__ = "velocities"
+    timestamp = db.Column(db.Time, primary_key=True)
+    mg320 = db.Column(db.Integer, nullable = False, default=0)
+    pg12 = db.Column(db.Integer, nullable = False, default=0)
+    evg = db.Column(db.Integer, nullable = False, default=0)
+    jager = db.Column(db.Integer, nullable = False, default=0)
+    schl1 = db.Column(db.Integer, nullable = False, default=0)
+    schl4 = db.Column(db.Integer, nullable = False, default=0)
+    schl5 = db.Column(db.Integer, nullable = False, default=0)
+    schl6 = db.Column(db.Integer, nullable = False, default=0)
+    schl7 = db.Column(db.Integer, nullable = False, default=0)
