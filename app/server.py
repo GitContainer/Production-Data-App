@@ -17,7 +17,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_POOL_SIZE"] = 150
 app.config["SQLALCHEMY_MAX_OVERFLOW"] = 150
 app.config["SQLALCHEMY_POOL_TIMEOUT"] = 300
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, session_options={'autocommit': True})
 db.create_all()
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
