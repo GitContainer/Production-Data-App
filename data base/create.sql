@@ -106,3 +106,5 @@ INSERT INTO velocities
     VALUES ('8:50:52', 100, 0, 0, 75, 65, 87, 75, 0, 45);
 
 select * from velocities;
+
+DELETE FROM velocities WHERE 1 = 1;

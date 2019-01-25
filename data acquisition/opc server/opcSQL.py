@@ -120,7 +120,10 @@ def gatherVelocities(plc):
                            "JAGER": Jager,
                            "SCHL1": Sch1,
                            "MG320": MG320,
-                           "5S07": PG12}
+                           "5S07": PG12,
+                           "EVG": 0,
+                           "SCHL6": 0
+                           }
     return machines_velocities
 
 def gatherStops(plc):
@@ -176,12 +179,11 @@ def closeSQL(conn, cur):
     cur.close()
     conn.close()
 
-def uploadData(cur, starts, stoptimes, stops, velocities, hits):
+def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour):
     for key in machines_status.keys():
         if key != "SCHL6" and key != "EVG":
             if machines_status[key] == False and starts[key] == True:
                 machines_status[key] = True
-                hour = datetime.now().strftime('%H:%M:%S')
                 start_times[key] = hour
                 query = ('UPDATE machines SET start_hour = %s where id = %s')
                 values = (hour, key)
@@ -195,6 +197,15 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits):
                     cur.execute(query, values)
                 except:
                     raise ValueError('Bad query')
+
+def uploadVelocities(cur, velocities, hour):
+    query = """INSERT INTO velocities 
+    (timestamp, mg320, pg12, evg, jager, schl1, schl4, schl5, schl6, schl7)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    values = (hour, velocities["MG320"], velocities["5S07"], velocities["EVG"], 
+                velocities["JAGER"], velocities["SCHL1"], velocities["SCHL4"],
+                velocities["SCHL5"], velocities["SCHL6"], velocities["SCHL7"])
+    cur.execute(query, values)
 
 def storeData(cur, shift, starts, stoptimes, stops, hits):
     date = dt.strftime("%A %d/%m/%Y")
@@ -254,6 +265,8 @@ def emptyTable(cur):
                 hour7 = 0,
                 hour8 = 0,
                 hour9 = 0"""
+    cur.execute(query)
+    query = "DELETE FROM velocities WHERE 1 = 1"
     cur.execute(query)
 
 def getHourPos():
@@ -368,27 +381,32 @@ if __name__ == "__main__":
                 conn, cur = connectSQL(
                     "postgres", "Autom2018", "localhost", "production_data")
                 if conn:
+                    # emptyTable(cur)
+                    # conn.commit()
                     shift = getShift(plc)
+                    i = 0
                     while True:
                         starts = checkStart(plc)
                         hits = gatherProductionData(plc)
                         stoptimes = gatherStopTime(plc)
                         velocities = gatherVelocities(plc)
                         stops = gatherStops(plc)
+                        hour = datetime.now().strftime('%H:%M:%S')
+                        if i % 5 == 0:
+                            uploadVelocities(cur, velocities, hour)
                         uploadData(cur, starts, stoptimes,
-                                   stops, velocities, hits)
+                                   stops, velocities, hits, hour)
                         conn.commit()
                         if endOfShift(plc) == 1:
                             break
                         sleep(1)
+                        i += 1
                     storeData(cur, shift, starts, stoptimes, stops, hits)
                     conn.commit()
                     AKS(plc)
                     while endOfShift(plc) == 1:
                         pass
                     resetAKS(plc)
-                    emptyTable(cur)
-                    conn.commit()
                     closeSQL(conn, cur)
                     machines_status = {"SCHL4": False,
                                        "SCHL5": False,
