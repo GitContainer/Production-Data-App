@@ -72,14 +72,13 @@
             </div>
         </div>
         <div class="col-lg-8">
-            <div class="card">
+            <div class="card" style="height: 460px">
                 <div class="card-header">
                     <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad</h2>
                 </div>
                 <div class="card-body">
-                    <div class="chart-holder mt-5 mb-5">
-                        <canvas id="Velocities" style="height: 370px; width: 100%;"></canvas>
-                    </div>
+                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 7 minutos</label>
+                    <canvas id="Velocities" style="height: 355px; width: 100%;  position:absolute; top:27%;"></canvas>
                 </div>
             </div>
         </div>
@@ -192,7 +191,7 @@
                     xAxes: [{
                         ticks: {
                             autoSkip: true,
-                            maxTicksLimit: 15
+                            maxTicksLimit: 6
                         }
                     }],
                     yAxes: [{
@@ -202,16 +201,20 @@
                             max: 120
                         }
                     }]
-                }
+                },
+                elements: { point: { radius: .5 } }
             }
         });
 
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('connect', function () {
             setInterval(update, 1500);
+            setInterval(updateVel, 3000);
         });
         function update() {
-            socket.emit('getData');
+            socket.emit('getData'); socket.emit('getVelocities');
+        }
+        function updateVel() {
             socket.emit('getVelocities');
         }
         socket.on('new_data', function (new_data) {
@@ -237,8 +240,8 @@
                 timeline.push(json_vel[k].timestamp);
                 velocities.push(json_vel[k].mg320);
             }
-            chartVel.data.labels = timeline;
-            chartVel.data.datasets[0].data = velocities;
+            chartVel.data.labels = timeline.slice(-80);
+            chartVel.data.datasets[0].data = velocities.slice(-80);
             chartVel.update();
         });
     }
