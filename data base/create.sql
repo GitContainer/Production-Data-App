@@ -108,3 +108,5 @@ INSERT INTO velocities
 select * from velocities;
 
 DELETE FROM velocities WHERE 1 = 1;
+
+delete from production where 1 = 1;

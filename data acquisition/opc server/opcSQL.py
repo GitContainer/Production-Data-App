@@ -2,8 +2,9 @@ import snap7.client as c
 from snap7.util import *
 from snap7.snap7types import *
 from time import sleep, strftime, gmtime, time
-from datetime import date, datetime
+from datetime import date
 import time as dt
+import datetime
 import psycopg2
 
 machines_status = {"SCHL4": False,
@@ -307,7 +308,7 @@ def emptyTable(cur):
     cur.execute(query)
 
 def getHourPos():
-    now = datetime.now()
+    now = datetime.datetime.now()
     hour = now.hour
     minute = now.minute
     day = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
@@ -418,8 +419,8 @@ if __name__ == "__main__":
                 conn, cur = connectSQL(
                     "postgres", "Autom2018", "localhost", "production_data")
                 if conn:
-                    # emptyTable(cur)
-                    # conn.commit()
+                    emptyTable(cur)
+                    conn.commit()
                     shift = getShift(plc)
                     i = 0
                     while True:
@@ -428,7 +429,7 @@ if __name__ == "__main__":
                         stoptimes = gatherStopTime(plc)
                         velocities = gatherVelocities(plc)
                         stops = gatherStops(plc)
-                        hour = datetime.now().strftime('%H:%M:%S')
+                        hour = datetime.datetime.now().strftime('%H:%M:%S')
                         if i % 5 == 0:
                             uploadVelocities(cur, velocities, hour)
                         uploadData(cur, starts, stoptimes,
@@ -463,6 +464,3 @@ if __name__ == "__main__":
         log.write(statusPLC)
         log.write("\n")
     log.close()
-
-
-# str(datetime.timedelta(seconds=3605))

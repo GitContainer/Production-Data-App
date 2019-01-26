@@ -1,3 +1,0 @@
-filter dropdown list for annual production
-initial hour from plc, not python
-android notifications

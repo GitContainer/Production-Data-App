@@ -9,6 +9,8 @@ from werkzeug.contrib.cache import SimpleCache
 import re
 
 app = Flask(__name__)
+
+# Configuration
 app.debug = True
 app.env = "development"
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -75,6 +77,42 @@ def record():
 @login_required
 def MG320():
     return render_template('MG320.html')
+
+
+@app.route("/PG12", methods=['GET'])
+@login_required
+def PG12():
+    return render_template('PG12.html')
+
+
+@app.route("/Jager", methods=['GET'])
+@login_required
+def Jager():
+    return render_template('Jager.html')
+
+
+@app.route("/Schlatter_1", methods=['GET'])
+@login_required
+def Schlatter_1():
+    return render_template('Schlatter_1.html')
+
+
+@app.route("/Schlatter_4", methods=['GET'])
+@login_required
+def Schlatter_4():
+    return render_template('Schlatter_4.html')
+
+
+@app.route("/Schlatter_5", methods=['GET'])
+@login_required
+def Schlatter_5():
+    return render_template('Schlatter_5.html')
+
+
+@app.route("/Schlatter_7", methods=['GET'])
+@login_required
+def Schlatter_7():
+    return render_template('Schlatter_7.html')
 
 
 @login_manager.user_loader
