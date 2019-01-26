@@ -1,3 +1,6 @@
 filter dropdown list for annual production
 mail
 deploy app
+virtual env
+formalize code
+separate code
