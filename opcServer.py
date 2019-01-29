@@ -224,7 +224,7 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour):
                 machines_status[key] = True
                 start_times[key] = str(gatherStartTime(plc, key))
                 query = ('UPDATE machines SET start_hour = %s where id = %s')
-                values = (hour, key)
+                values = (start_times[key], key)
                 cur.execute(query, values)
             hourx = getHourPos()
             if hourx != -1:
@@ -414,6 +414,9 @@ if __name__ == "__main__":
     log = open("log.txt", 'a+')
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
+        # AKS(plc)
+        # sleep(2)
+        # resetAKS(plc)
         while True:
             if getShift(plc) != 0:
                 conn, cur = connectSQL(
