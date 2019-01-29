@@ -107,7 +107,18 @@ INSERT INTO velocities
     VALUES ('9:10:52', 40, 65, 77, 92, 86, 70, 80, 60, 0);
 
 select * from velocities;
+select * from machines;
 
 DELETE FROM velocities WHERE 1 = 1;
 
 delete from production where 1 = 1;
+
+insert into machines
+    (id, name, start_hour, stop_time, stops, velocity, hits, hour0, hour1, hour2, hour3, hour4, hour5, hour6, hour7, hour8, hour9)
+    values ('SCHL7', 'Schlatter 7', '7:40:32', '00:5:45', 45, 101, 6500, 500, 750 , 1650, 3200, 3500, 4200, 5000, 5420, 5900, 6500);
+
+insert into machines
+    (id, name)
+    values ('SCHL', 'Schlatter 5')
+
+ALTER TABLE machines ALTER COLUMN hour9 set DEFAULT 0
