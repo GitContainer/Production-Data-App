@@ -54,6 +54,8 @@ delete from production where id >= 1;
  
 select * from production; 
 select * from products;
+select * from users;
+select * from machines;
 SELECT pg_reload_conf();
 
 UPDATE machines
@@ -87,7 +89,6 @@ UPDATE machines
 --         hour8 = 25000,  
 --         hour9 = 28856
 --     WHERE id = 'MG320';
-select * from machines;
 
 SELECT pg_terminate_backend(23156);
 
@@ -103,7 +104,7 @@ UPDATE machines
 
 INSERT INTO velocities 
     (timestamp, mg320, pg12, evg, jager, schl1, schl4, schl5, schl6, schl7)
-    VALUES ('8:50:52', 100, 0, 0, 75, 65, 87, 75, 0, 45);
+    VALUES ('9:10:52', 40, 65, 77, 92, 86, 70, 80, 60, 0);
 
 select * from velocities;
 
