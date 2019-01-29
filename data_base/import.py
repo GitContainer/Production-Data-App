@@ -1,9 +1,8 @@
 import csv
-import os
 import sys
 
 sys.path.append('C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\app')
-#sys.path.append('D:\\Projects\\production-data-app\\app')
+# sys.path.append('D:\\Projects\\production-data-app\\app')
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -13,7 +12,7 @@ engine = create_engine('postgresql+psycopg2://postgres:Autom2018@localhost/produ
 db = scoped_session(sessionmaker(bind=engine))
 
 def productsUpload():
-    #path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\products.csv"
+    # path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\products.csv"
     path = "D:\\Projects\\production-data-app\\data base\\products.csv"
     f = open(path)
     reader = csv.reader(f)
@@ -25,7 +24,7 @@ def productsUpload():
     db.commit()
 
 def usersUpload():
-    #path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\users.csv"
+    # path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\users.csv"
     path = "D:\\Projects\\production-data-app\\data base\\products.csv"
     f = open(path)
     reader = csv.reader(f)
@@ -38,7 +37,7 @@ def usersUpload():
 
 def machinesUpload():
     path = "C:\\Users\\automatizacion\\Desktop\\Git Projects\\production-data-app\\data base\\machines.csv"
-    #path = "D:\\Projects\\production-data-app\\data base\\machines.csv"
+    # path = "D:\\Projects\\production-data-app\\data base\\machines.csv"
     f = open(path)
     reader = csv.reader(f)
     next(reader)

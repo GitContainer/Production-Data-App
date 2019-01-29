@@ -3,8 +3,6 @@ mail
 
 deploy app
 
-
 formalize code
 
-separate code
 automatically launch opcSQL

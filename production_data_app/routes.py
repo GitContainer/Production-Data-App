@@ -1,34 +1,27 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, Response, jsonify
-from models import *
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
-from sqlalchemy import and_
-from flask_bcrypt import Bcrypt
-from flask_socketio import SocketIO, emit, send
+from flask import render_template, request, flash, redirect, url_for, Response, jsonify
+from flask_login import login_required, login_user, logout_user, current_user
 import json
+from production_data_app import app, bcrypt, login_manager, socketio
 from werkzeug.contrib.cache import SimpleCache
-import re
+from flask_socketio import emit
+from production_data_app.models import User, Production, Velocity, Machine
 
-app = Flask(__name__)
-
-# Configuration
-app.debug = True
-app.env = "development"
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:Autom2018@localhost/production_data'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_POOL_SIZE"] = 150
-app.config["SQLALCHEMY_MAX_OVERFLOW"] = 150
-app.config["SQLALCHEMY_POOL_TIMEOUT"] = 300
-db = SQLAlchemy(app, session_options={'autocommit': True})
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
-login_manager.login_message_category = 'info'
-login_manager.login_message = "Favor de iniciar sesión"
-bcrypt = Bcrypt(app)
-socketio = SocketIO(app)
 CACHE_TIMEOUT = 1500
 cache = SimpleCache()
 
+class cached(object):
+
+    def __init__(self, timeout=None):
+        self.timeout = timeout or CACHE_TIMEOUT
+
+    def __call__(self, f):
+        def decorator(*args, **kwargs):
+            response = cache.get(request.path)
+            if response is None:
+                response = f(*args, **kwargs)
+                cache.set(request.path, response, self.timeout)
+            return response
+        return decorator
 
 @app.route("/")
 def index():
@@ -118,21 +111,6 @@ def Schlatter_7():
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
-
-
-class cached(object):
-
-    def __init__(self, timeout=None):
-        self.timeout = timeout or CACHE_TIMEOUT
-
-    def __call__(self, f):
-        def decorator(*args, **kwargs):
-            response = cache.get(request.path)
-            if response is None:
-                response = f(*args, **kwargs)
-                cache.set(request.path, response, self.timeout)
-            return response
-        return decorator
 
 
 @socketio.on('getData')
@@ -272,7 +250,6 @@ def refreshData():
                         "hour9": schl7.hour9
                 }
     }
-    db.session.remove()
     new_data = json.dumps(new_data)
     emit('new_data', new_data, broadcast=False)
 
@@ -317,8 +294,3 @@ def getVelocities():
         del d
     new_velocities = json.dumps(D)
     emit('new_velocities', new_velocities, broadcast=False)
-
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    socketio.run(app)

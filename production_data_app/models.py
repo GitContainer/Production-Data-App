@@ -1,5 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-from server import db
+from production_data_app import db
 from flask_login import UserMixin
 
 class User(db.Model, UserMixin):
@@ -9,7 +8,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
     
-
 class Product(db.Model):
     __tablename__ = "products"
     id = db.Column(db.String, primary_key=True)
