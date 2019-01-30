@@ -5,6 +5,7 @@ from production_data_app import app, bcrypt, login_manager, socketio
 from werkzeug.contrib.cache import SimpleCache
 from flask_socketio import emit
 from production_data_app.models import User, Production, Velocity, Machine
+import collections
 
 CACHE_TIMEOUT = 1500
 cache = SimpleCache()
@@ -257,7 +258,7 @@ def refreshData():
 @cached()
 def get_anual_production():
     production = Production.query.all()
-    D = {}
+    D = collections.OrderedDict()
     for row in production:
         d = {}
         d["date"] = row.date
@@ -269,14 +270,14 @@ def get_anual_production():
         d["hits"] = row.hits
         D[row.id] = d
         del d
-    new_data = json.dumps(D)
+    new_data = json.dumps(D, sort_keys=True)
     emit('annual production', new_data, broadcast=False)
 
 @socketio.on('getVelocities')
 @cached()
 def getVelocities():
     velocities = Velocity.query.all()
-    D = {}
+    D = collections.OrderedDict()
     i = 0
     for row in velocities:
         d = {}
@@ -292,5 +293,5 @@ def getVelocities():
         i += 1
         D[row_number] = d
         del d
-    new_velocities = json.dumps(D)
+    new_velocities = json.dumps(D, sort_keys=True)
     emit('new_velocities', new_velocities, broadcast=False)

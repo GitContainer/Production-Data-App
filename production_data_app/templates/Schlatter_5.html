@@ -41,7 +41,8 @@
                 </div>
                 <div class="card-body" style="text-align: center;">
                     <label id="last_stop" style="font-size: 15px; margin-top: -12px;
-                        margin-bottom: 0px;">Sin paros registrados desde la carga de la página</label>
+                        margin-bottom: 0px;">Sin
+                        paros registrados desde la carga de la página</label>
                 </div>
             </div>
         </div>
@@ -186,6 +187,7 @@
         });
         chartVel = new Chart(c2, {
             type: 'line',
+            showXLabels: 10,
             data: {
                 labels: timeline,
                 datasets: [{
@@ -196,12 +198,6 @@
             },
             options: {
                 scales: {
-                    xAxes: [{
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 6
-                        }
-                    }],
                     yAxes: [{
                         stacked: true,
                         ticks: {
@@ -234,7 +230,7 @@
             data = getDifference(array);
             chartPPH.data.datasets[0].data = data;
             chartPPH.update();
-            if(Number.isInteger(stops)){
+            if (Number.isInteger(stops)) {
                 document.querySelector("#stops").innerHTML = stops;
             }
             if (start_time == "None") {
@@ -243,15 +239,15 @@
             else {
                 document.querySelector("#start_time").innerHTML = start_time;
             }
-            if(stop_time == "None"){
+            if (stop_time == "None") {
                 document.querySelector("#hours").innerHTML = "0  hora(s)";
                 document.querySelector("#minutes").innerHTML = "0  minutos(s)";
                 document.querySelector("#seconds").innerHTML = "0  segundos(s)";
             }
-            else{
+            else {
                 document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
                 document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
-                document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");                
+                document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
             }
         });
         socket.on('new_velocities', function (new_velocities) {
@@ -262,20 +258,21 @@
                 timeline.push(json_vel[k].timestamp);
                 velocities.push(json_vel[k].schl5);
             }
-            chartVel.data.labels = timeline.slice(-80);
-            chartVel.data.datasets[0].data = velocities.slice(-80);
+            if (velocities.length > 80) {
+                chartVel.data.labels = timeline.slice(-80);
+                chartVel.data.datasets[0].data = velocities.slice(-80);
+            }
+            else {
+                chartVel.data.labels = timeline;
+                chartVel.data.datasets[0].data;
+            }
             chartVel.update();
             if (velocities.slice(-1) != 0) {
                 StopState = false;
             }
             if (velocities.slice(-1) == 0 && StopState == false) {
                 StopState = true;
-                var date = new Date();
-                var utcDate = new Date(date.toUTCString());
-                hour = String(utcDate.getHours());
-                minute = String(utcDate.getMinutes());
-                second = String(utcDate.getSeconds());
-                last_stop_time = hour + ':' + minute + ':' + second
+                last_stop_time = json_vel[k].timestamp;
                 document.querySelector("#last_stop").innerHTML = last_stop_time;
             }
         });

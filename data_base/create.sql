@@ -55,6 +55,7 @@ delete from production where id >= 1;
 select * from production; 
 select * from products;
 select * from machines;
+select * from users;
 SELECT pg_reload_conf();
 
 UPDATE machines
@@ -112,7 +113,7 @@ DELETE FROM velocities WHERE 1 = 1;
 
 delete from production where 1 = 1;
 
-delete from users where name = 'braulio'
+delete from users where name = 'Braulio González'
 select * from users;
 
 insert into machines

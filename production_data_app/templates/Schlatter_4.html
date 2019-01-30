@@ -258,10 +258,16 @@
             var json_vel = JSON.parse(new_velocities);
             timeline = [];
             velocities = [];
+            var row = 1;
             for (var k in json_vel) {
+                console.log("row:" + String(row));
                 timeline.push(json_vel[k].timestamp);
+                console.log(json_vel[k].timestamp);
                 velocities.push(json_vel[k].schl4);
+                console.log(json_vel[k].schl4);
+                row ++;
             }
+            console.log("Finished JSON")
             chartVel.data.labels = timeline.slice(-80);
             chartVel.data.datasets[0].data = velocities.slice(-80);
             chartVel.update();
@@ -275,7 +281,7 @@
                 hour = String(utcDate.getHours());
                 minute = String(utcDate.getMinutes());
                 second = String(utcDate.getSeconds());
-                last_stop_time = hour + ':' + minute + ':' + second
+                last_stop_time = hour + ':' + minute + ':' + second;
                 document.querySelector("#last_stop").innerHTML = last_stop_time;
             }
         });

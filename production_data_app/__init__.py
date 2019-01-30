@@ -7,7 +7,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 
 # Configuration
-app.debug = True
+app.debug = False
 app.env = "development"
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:Autom2018@localhost/production_data'

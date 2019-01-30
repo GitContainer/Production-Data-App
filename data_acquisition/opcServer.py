@@ -411,12 +411,9 @@ def getQuery(hourx):
     return query
 
 if __name__ == "__main__":
-    log = open("log.txt", 'a+')
+    # log = open("log.txt", 'a+')
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
-        # AKS(plc)
-        # sleep(2)
-        # resetAKS(plc)
         while True:
             if getShift(plc) != 0:
                 conn, cur = connectSQL(
@@ -459,11 +456,13 @@ if __name__ == "__main__":
                                        "EVG": False,
                                        "SCHL6": False}
                 else:
-                    log.write(str(cur))
-                    log.write("\n")
+                    # log.write(str(cur))
+                    # log.write("\n")
+                    pass
             else:
                 sleep(30)
     else:
-        log.write(statusPLC)
-        log.write("\n")
-    log.close()
+        # log.write(statusPLC)
+        # log.write("\n")
+        pass
+    # log.close()
