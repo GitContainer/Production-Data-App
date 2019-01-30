@@ -35,8 +35,7 @@ if __name__ == "__main__":
         while not password.isalnum():
             print("Ingrese una contraseña válida")
             password = input("Ingrese la contraseña: ")
-
-        pw_hash = bcrypt.generate_password_hash(password)
+        pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
         query = """INSERT INTO users 
                     (name, email, password)
                     VALUES (%s, %s, %s)"""
