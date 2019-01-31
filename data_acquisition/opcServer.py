@@ -414,6 +414,9 @@ if __name__ == "__main__":
     # log = open("log.txt", 'a+')
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
+        AKS(plc)
+        sleep(2)
+        resetAKS(plc)
         while True:
             if getShift(plc) != 0:
                 conn, cur = connectSQL(

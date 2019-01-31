@@ -270,7 +270,7 @@ def get_anual_production():
         d["hits"] = row.hits
         D[row.id] = d
         del d
-    new_data = json.dumps(D, sort_keys=True)
+    new_data = json.dumps(D)
     emit('annual production', new_data, broadcast=False)
 
 @socketio.on('getVelocities')
@@ -293,5 +293,5 @@ def getVelocities():
         i += 1
         D[row_number] = d
         del d
-    new_velocities = json.dumps(D, sort_keys=True)
+    new_velocities = json.dumps(D)
     emit('new_velocities', new_velocities, broadcast=False)

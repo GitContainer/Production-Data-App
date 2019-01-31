@@ -21,7 +21,7 @@
                     <h2 class="h6 text-uppercase mb-0">Producción deseada</h2>
                 </div>
                 <div class="card-body" style="text-align:center">
-                    <p class="mb-5 text-gray" style="margin-bottom: -50px;">Ingresar la meta de golpes por hora: </p>
+                    <p class="mb-5 text-gray" style="margin-bottom: 0px;">Ingresar la meta de golpes por hora: </p>
                     <input type="number" class="form-control" id="goal" placeholder="Golpes por hora" style="position: relative; top:-5%; margin-top: -25px;">
                     <button onclick="graphLine()" class="btn btn-primary" style="color:lightgray; border-color: lightgray; background-color: #3A3A3C; border-width: 2px; position: relative; margin-top: 15px;">Graficar</button>
                 </div>
@@ -40,8 +40,7 @@
                     <h2 class="h6 text-uppercase mb-0">Últimpo paro</h2>
                 </div>
                 <div class="card-body" style="text-align: center;">
-                    <label id="last_stop" style="font-size: 15px; margin-top: -12px;
-                        margin-bottom: 0px;">Sin paros registrados desde la carga de la página</label>
+                    <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros registrados desde la carga de la página</label>
                 </div>
             </div>
         </div>
@@ -53,8 +52,7 @@
                     <h2 class="h6 text-uppercase mb-0">Hora de inicio</h2>
                 </div>
                 <div class="card-body" style="text-align:center;">
-                    <label id="start_time" style="font-size: 30px; margin-top: -12px;
-                        margin-bottom: 0px;"></label>
+                    <label id="start_time" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;"></label>
                 </div>
             </div>
             <div class="card mb-4">
@@ -77,7 +75,7 @@
                     <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad</h2>
                 </div>
                 <div class="card-body">
-                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 7 minutos</label>
+                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 9 minutos</label>
                     <canvas id="Velocities" style="height: 355px; width: 100%;  position:absolute; top:27%;"></canvas>
                 </div>
             </div>
@@ -101,10 +99,10 @@
         minute = utcDate.getMinutes();
         week_day = utcDate.getDay();
         if (7 <= hour && hour <= 17) {
-            if (week_day == 6){
+            if (week_day == 6) {
                 labels = ["7:30 - 8:30", "8:30 - 9:30", "9:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30", "12:30 - 13:30"];
             }
-            else{
+            else {
                 if ((hour == 7 && minute < 30) || (hour == 17 && minute > 30)) {
                     labels = ["21:30 - 22:30", "22:30 - 23:30", "23:30 - 00:30", "00:30 - 1:30", "1:30 - 2:30", "2:30 - 3:30", "3:30 - 4:30", "4:30 - 5:30", "5:30 - 6:30", "6:30 - 7:30"];
                 }
@@ -196,65 +194,67 @@
             },
             options: {
                 scales: {
-                    xAxes: [{
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 6
-                        }
-                    }],
                     yAxes: [{
                         stacked: true,
                         ticks: {
                             beginAtZero: true,
                             max: 120
                         }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10
+                        }
                     }]
                 },
                 elements: { point: { radius: .5 } }
             }
         });
-
+        var start_time = "None";
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('connect', function () {
             setInterval(update, 1500);
             setInterval(updateVel, 3000);
         });
         function update() {
-            socket.emit('getData'); socket.emit('getVelocities');
+            socket.emit('getData');
+            socket.emit('getVelocities');
         }
         function updateVel() {
             socket.emit('getVelocities');
         }
         socket.on('new_data', function (new_data) {
             var json = JSON.parse(new_data);
-            var start_time = json['MG320']['start_time'];
+            start_time = json['MG320']['start_time'];
             var stop_time = json['MG320']['stop_time'];
             var stops = json['MG320']['stops'];
             var array = [json['MG320']['hour0'], json['MG320']['hour1'], json['MG320']['hour2'], json['MG320']['hour3'], json['MG320']['hour4'], json['MG320']['hour5'], json['MG320']['hour6'], json['MG320']['hour7'], json['MG320']['hour8'], json['MG320']['hour9']];
             data = getDifference(array);
             chartPPH.data.datasets[0].data = data;
             chartPPH.update();
-            if(Number.isInteger(stops)){
+            if (Number.isInteger(stops)) {
                 document.querySelector("#stops").innerHTML = stops;
             }
-            if(start_time == "None"){
+            if (start_time == "None") {
                 document.querySelector("#start_time").innerHTML = "No ha iniciado la máquina";
             }
-            else{
+            else {
                 document.querySelector("#start_time").innerHTML = start_time;
             }
-            if(stop_time == "None"){
+            if (stop_time == "None") {
                 document.querySelector("#hours").innerHTML = "0  hora(s)";
                 document.querySelector("#minutes").innerHTML = "0  minutos(s)";
                 document.querySelector("#seconds").innerHTML = "0  segundos(s)";
             }
-            else{
+            else {
                 document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
                 document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
-                document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");                
+                document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
             }
         });
         socket.on('new_velocities', function (new_velocities) {
+            if (start_time != "None"){
             var json_vel = JSON.parse(new_velocities);
             timeline = [];
             velocities = [];
@@ -262,21 +262,20 @@
                 timeline.push(json_vel[k].timestamp);
                 velocities.push(json_vel[k].mg320);
             }
-            chartVel.data.labels = timeline.slice(-80);
-            chartVel.data.datasets[0].data = velocities.slice(-80);
+            if (velocities.length > 80) {
+                timeline = timeline.slice(-80);
+                velocities = velocities.slice(-80);
+            }
+            chartVel.data.labels = timeline;
+            chartVel.data.datasets[0].data = velocities;
             chartVel.update();
             if (velocities.slice(-1) != 0) {
                 StopState = false;
             }
             if (velocities.slice(-1) == 0 && StopState == false) {
                 StopState = true;
-                var date = new Date();
-                var utcDate = new Date(date.toUTCString());
-                hour = String(utcDate.getHours());
-                minute = String(utcDate.getMinutes());
-                second = String(utcDate.getSeconds());
-                last_stop_time = hour + ':' + minute + ':' + second;
-                document.querySelector("#last_stop").innerHTML = last_stop_time;
+                document.querySelector("#last_stop").innerHTML = json_vel[k].timestamp;
+            }
             }
         });
     }
