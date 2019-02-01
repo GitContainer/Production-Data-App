@@ -226,34 +226,32 @@
             socket.emit('getVelocities');
         }
         socket.on('new_data', function (new_data) {
-            if (start_time != "None") {
-                var json = JSON.parse(new_data);
-                start_time = json['Schlatter5']['start_time'];
-                var stop_time = json['Schlatter5']['stop_time'];
-                var stops = json['Schlatter5']['stops'];
-                var array = [json['Schlatter5']['hour0'], json['Schlatter5']['hour1'], json['Schlatter5']['hour2'], json['Schlatter5']['hour3'], json['Schlatter5']['hour4'], json['Schlatter5']['hour5'], json['Schlatter5']['hour6'], json['Schlatter5']['hour7'], json['Schlatter5']['hour8'], json['Schlatter5']['hour9']];
-                data = getDifference(array);
-                chartPPH.data.datasets[0].data = data;
-                chartPPH.update();
-                if (Number.isInteger(stops)) {
-                    document.querySelector("#stops").innerHTML = stops;
-                }
-                if (start_time == "None") {
-                    document.querySelector("#start_time").innerHTML = "No ha iniciado la máquina";
-                }
-                else {
-                    document.querySelector("#start_time").innerHTML = start_time;
-                }
-                if (stop_time == "None") {
-                    document.querySelector("#hours").innerHTML = "0  hora(s)";
-                    document.querySelector("#minutes").innerHTML = "0  minutos(s)";
-                    document.querySelector("#seconds").innerHTML = "0  segundos(s)";
-                }
-                else {
-                    document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
-                    document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
-                    document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
-                }
+            var json = JSON.parse(new_data);
+            start_time = json['Schlatter5']['start_time'];
+            var stop_time = json['Schlatter5']['stop_time'];
+            var stops = json['Schlatter5']['stops'];
+            var array = [json['Schlatter5']['hour0'], json['Schlatter5']['hour1'], json['Schlatter5']['hour2'], json['Schlatter5']['hour3'], json['Schlatter5']['hour4'], json['Schlatter5']['hour5'], json['Schlatter5']['hour6'], json['Schlatter5']['hour7'], json['Schlatter5']['hour8'], json['Schlatter5']['hour9']];
+            data = getDifference(array);
+            chartPPH.data.datasets[0].data = data;
+            chartPPH.update();
+            if (Number.isInteger(stops)) {
+                document.querySelector("#stops").innerHTML = stops;
+            }
+            if (start_time == "None") {
+                document.querySelector("#start_time").innerHTML = "No ha iniciado la máquina";
+            }
+            else {
+                document.querySelector("#start_time").innerHTML = start_time;
+            }
+            if (stop_time == "None") {
+                document.querySelector("#hours").innerHTML = "0  hora(s)";
+                document.querySelector("#minutes").innerHTML = "0  minutos(s)";
+                document.querySelector("#seconds").innerHTML = "0  segundos(s)";
+            }
+            else {
+                document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
+                document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
+                document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
             }
         });
         socket.on('new_velocities', function (new_velocities) {
@@ -264,7 +262,7 @@
                 var n = Object.keys(json_vel).length;
                 for (var i=0; i<n; i++){
                     timeline.push(json_vel[i]["timestamp"]);
-                    velocities.push(json_vel[i]["mg320"])
+                    velocities.push(json_vel[i]["schl5"])
                 }
                 if (velocities.length > 80) {
                     timeline = timeline.slice(-80);

@@ -23,6 +23,7 @@ class Machine(db.Model):
     name = db.Column(db.String, nullable=False)
     start_hour = db.Column(db.Time, nullable=True)
     stop_time = db.Column(db.Time, nullable=True) 
+    last_stop = db.Column(db.Time, nullable=True)
     stops = db.Column(db.Integer, nullable=True)
     velocity = db.Column(db.Integer, nullable=True)
     hits = db.Column(db.Integer, nullable=True, default=0)

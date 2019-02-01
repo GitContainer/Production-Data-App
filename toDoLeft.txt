@@ -5,4 +5,6 @@ mail
 
 
 requirements.txt
-arreglar schlatter 5 hora de inicicio
+comment code
+docker
+total golpes gráficas

@@ -262,7 +262,7 @@
                 var n = Object.keys(json_vel).length;
                 for (var i=0; i<n; i++){
                     timeline.push(json_vel[i]["timestamp"]);
-                    velocities.push(json_vel[i]["mg320"])
+                    velocities.push(json_vel[i]["pg12"])
                 }
                 if (velocities.length > 80) {
                     timeline = timeline.slice(-80);

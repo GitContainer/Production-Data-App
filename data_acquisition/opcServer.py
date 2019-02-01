@@ -7,18 +7,6 @@ import time as dt
 import datetime
 import psycopg2
 
-machines_status = {"SCHL4": False,
-                   "SCHL5": False,
-                   "SCHL7": False,
-                   "JAGER": False,
-                   "SCHL1": False,
-                   "MG320": False,
-                   "5S07": False,
-                   "EVG": False,
-                   "SCHL6": False}
-
-start_times = {}
-
 def ReadMemory(plc, byte, bit, datatype):
     result = plc.read_area(areas['MK'], 0, byte, datatype)
     if datatype == S7WLBit:
@@ -32,6 +20,7 @@ def ReadMemory(plc, byte, bit, datatype):
     else:
         return None
 
+
 def WriteMemory(plc, byte, bit, datatype, value):
     result = plc.read_area(areas['MK'], 0, byte, datatype)
     if datatype == S7WLBit:
@@ -44,6 +33,7 @@ def WriteMemory(plc, byte, bit, datatype, value):
         set_dword(result, 0, value)
     plc.write_area(areas["MK"], 0, byte, result)
 
+
 def connectPLC(ipadress):
     plc = c.Client()
     try:
@@ -55,6 +45,7 @@ def connectPLC(ipadress):
             return (plc, "Connected")
         else:
             return (plc, "Error: Unknown")
+
 
 def gatherProductionData(plc):
     Sch4 = ReadMemory(plc, 28, 0, S7WLDWord)
@@ -73,6 +64,7 @@ def gatherProductionData(plc):
                            "MG320": MG320,
                            "5S07": PG12}
     return machines_production
+
 
 def gatherStartTime(plc, machine):
     if machine == "SCHL4":
@@ -111,6 +103,7 @@ def gatherStartTime(plc, machine):
         second = ReadMemory(plc, 132, 0, S7WLWord)
         return datetime.time(hour, minute, second)
 
+
 def gatherStopTime(plc):
     Sch4 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 60, 0, S7WLDWord)))
     Sch5 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 64, 0, S7WLDWord)))
@@ -129,7 +122,8 @@ def gatherStopTime(plc):
                          "5S07": PG12}
     return machines_stoptime
 
-def gatherVelocities(plc):
+
+def gatherVelocities(plc, old_velocities):
     Sch4 = float(ReadMemory(plc, 32, 0, S7WLDWord))
     if Sch4 != 0:
         Sch4 = int(60000 / Sch4)
@@ -152,17 +146,25 @@ def gatherVelocities(plc):
     if PG12 != 0:
         PG12 = int(60000 / PG12)
 
-    machines_velocities = {"SCHL4": Sch4,
-                           "SCHL5": Sch5,
-                           "SCHL7": Sch7,
-                           "JAGER": Jager,
-                           "SCHL1": Sch1,
-                           "MG320": MG320,
-                           "5S07": PG12,
-                           "EVG": 0,
-                           "SCHL6": 0
-                           }
-    return machines_velocities
+    new_velocities = {
+        "SCHL4": Sch4,
+        "SCHL5": Sch5,
+        "SCHL7": Sch7,
+        "JAGER": Jager,
+        "SCHL1": Sch1,
+        "MG320": MG320,
+        "5S07": PG12,
+        "EVG": 0,
+        "SCHL6": 0
+    }
+    in_stop_state = []
+
+    for key, value in new_velocities.items():
+        if value == 0 and old_velocities[key] > 0:
+            in_stop_state.append(key)
+
+    return (new_velocities, in_stop_state)
+
 
 def gatherStops(plc):
     Sch4 = ReadMemory(plc, 108, 0, S7WLWord)
@@ -182,9 +184,10 @@ def gatherStops(plc):
                       "5S07": PG12}
     return machines_stops
 
+
 def checkStart(plc):
     Sch4 = ReadMemory(plc, 106, 0, S7WLBit)
-    Sch5 = ReadMemory(plc, 103, 1, S7WLBit)
+    Sch5 = ReadMemory(plc, 106, 1, S7WLBit)
     Sch7 = ReadMemory(plc, 106, 2, S7WLBit)
     Jager = ReadMemory(plc, 106, 3, S7WLBit)
     Sch1 = ReadMemory(plc, 106, 4, S7WLBit)
@@ -202,6 +205,7 @@ def checkStart(plc):
                       "SCHL6": False}
     return machines_start
 
+
 def connectSQL(user, password, host, database):
     conn = None
     try:
@@ -213,11 +217,12 @@ def connectSQL(user, password, host, database):
     else:
         return (conn, cur)
 
+
 def closeSQL(conn, cur):
     cur.close()
     conn.close()
 
-def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour):
+def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state):
     for key in machines_status.keys():
         if key != "SCHL6" and key != "EVG":
             if machines_status[key] == False and starts[key] == True:
@@ -229,23 +234,26 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour):
             hourx = getHourPos()
             if hourx != -1:
                 query = getQuery(hourx)
-                values = (stoptimes[key], stops[key],
-                          velocities[key], hits[key], hits[key], key)
-                try:
-                    cur.execute(query, values)
-                except:
-                    raise ValueError('Bad query')
+                values = (stoptimes[key], stops[key], velocities[key], hits[key], hits[key], key)
+                cur.execute(query, values)
+            if key in in_stop_state:
+                query = ('UPDATE machines SET last_stop = %s where id = %s')
+                values = (hour, key)
+                cur.execute(query, values)
+    return (machines_status, start_times)
+
 
 def uploadVelocities(cur, velocities, hour):
     query = """INSERT INTO velocities 
     (timestamp, mg320, pg12, evg, jager, schl1, schl4, schl5, schl6, schl7)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    values = (hour, velocities["MG320"], velocities["5S07"], velocities["EVG"], 
-                velocities["JAGER"], velocities["SCHL1"], velocities["SCHL4"],
-                velocities["SCHL5"], velocities["SCHL6"], velocities["SCHL7"])
+    values = (hour, velocities["MG320"], velocities["5S07"], velocities["EVG"],
+              velocities["JAGER"], velocities["SCHL1"], velocities["SCHL4"],
+              velocities["SCHL5"], velocities["SCHL6"], velocities["SCHL7"])
     cur.execute(query, values)
 
-def storeData(cur, shift, starts, stoptimes, stops, hits):
+
+def storeData(cur, shift, starts, stoptimes, stops, hits, machines_status, start_times):
     date = dt.strftime("%A %d/%m/%Y")
     for key in machines_status.keys():
         if machines_status[key] is True:
@@ -256,6 +264,7 @@ def storeData(cur, shift, starts, stoptimes, stops, hits):
             values = (date, shift, machine,
                       start_times[key], stoptimes[key], stops[key], hits[key])
             cur.execute(query, values)
+
 
 def getMachine(id):
     D = {"SCHL4": "Schlatter 4",
@@ -269,6 +278,7 @@ def getMachine(id):
          "SCHL6": "Schlatter 6"}
     return D[id]
 
+
 def getShift(plc):
     if ReadMemory(plc, 0, 0, S7WLBit):
         return 1
@@ -277,14 +287,18 @@ def getShift(plc):
     else:
         return 0
 
+
 def endOfShift(plc):
     return ReadMemory(plc, 1, 1, S7WLBit)
+
 
 def AKS(plc):
     WriteMemory(plc, 0, 7, S7WLBit, True)
 
+
 def resetAKS(plc):
     WriteMemory(plc, 0, 7, S7WLBit, False)
+
 
 def emptyTable(cur):
     query = """UPDATE machines
@@ -307,6 +321,7 @@ def emptyTable(cur):
     query = "DELETE FROM velocities WHERE 1 = 1"
     cur.execute(query)
 
+
 def getHourPos():
     now = datetime.datetime.now()
     hour = now.hour
@@ -326,6 +341,7 @@ def getHourPos():
                     res = "hour" + str(i - 1)
             break
     return res
+
 
 def getQuery(hourx):
     if hourx == "hour0":
@@ -410,62 +426,78 @@ def getQuery(hourx):
                     WHERE id = %s"""
     return query
 
+
 if __name__ == "__main__":
-    # log = open("log.txt", 'a+')
+    log = open("log.txt", 'a+')
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
-        AKS(plc)
-        sleep(2)
-        resetAKS(plc)
         while True:
             if getShift(plc) != 0:
-                conn, cur = connectSQL(
-                    "postgres", "Autom2018", "localhost", "production_data")
+                conn, cur = connectSQL("postgres", "Autom2018", "localhost", "production_data")
                 if conn:
+                    machines_status = {
+                        "SCHL4": False,
+                        "SCHL5": False,
+                        "SCHL7": False,
+                        "JAGER": False,
+                        "SCHL1": False,
+                        "MG320": False,
+                        "5S07": False,
+                        "EVG": False,
+                        "SCHL6": False
+                    }
+                    velocities = {
+                        "SCHL4": 0,
+                        "SCHL5": 0,
+                        "SCHL7": 0,
+                        "JAGER": 0,
+                        "SCHL1": 0,
+                        "MG320": 0,
+                        "5S07": 0,
+                        "EVG": 0,
+                        "SCHL6": 0
+                    }
+                    start_times = {}
                     emptyTable(cur)
                     conn.commit()
+                    print("Cleared table")
                     shift = getShift(plc)
                     i = 0
                     while True:
-                        starts = checkStart(plc)
-                        hits = gatherProductionData(plc)
-                        stoptimes = gatherStopTime(plc)
-                        velocities = gatherVelocities(plc)
-                        stops = gatherStops(plc)
-                        hour = datetime.datetime.now().strftime('%H:%M:%S')
-                        if i % 5 == 0:
-                            uploadVelocities(cur, velocities, hour)
-                        uploadData(cur, starts, stoptimes,
-                                   stops, velocities, hits, hour)
-                        conn.commit()
+                        try:
+                            starts = checkStart(plc)
+                            hits = gatherProductionData(plc)
+                            stoptimes = gatherStopTime(plc)
+                            velocities, in_stop_state = gatherVelocities(plc, velocities)
+                            stops = gatherStops(plc)
+                        except:
+                            log.write("Connection to PLC lost")
+                            log.write("\n")
+                        else:
+                            print("updating")
+                            hour = datetime.datetime.now().strftime('%H:%M:%S')
+                            if i % 5 == 0:
+                                uploadVelocities(cur, velocities, hour)
+                            machines_status, start_times = uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state)
+                            conn.commit()
                         if endOfShift(plc) == 1:
                             break
                         sleep(1)
                         i += 1
-                    storeData(cur, shift, starts, stoptimes, stops, hits)
+                    storeData(cur, shift, starts, stoptimes, stops, hits, machines_status, start_times)
                     conn.commit()
                     AKS(plc)
                     while endOfShift(plc) == 1:
                         pass
                     resetAKS(plc)
                     closeSQL(conn, cur)
-                    machines_status = {"SCHL4": False,
-                                       "SCHL5": False,
-                                       "SCHL7": False,
-                                       "JAGER": False,
-                                       "SCHL1": False,
-                                       "MG320": False,
-                                       "5S07": False,
-                                       "EVG": False,
-                                       "SCHL6": False}
                 else:
-                    # log.write(str(cur))
-                    # log.write("\n")
-                    pass
+                    log.write(str(cur))
+                    log.write("\n")
             else:
                 sleep(30)
+                print("Sleeping")
     else:
-        # log.write(statusPLC)
-        # log.write("\n")
-        pass
-    # log.close()
+        log.write(statusPLC)
+        log.write("\n")
+    log.close()

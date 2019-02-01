@@ -125,3 +125,5 @@ insert into machines
     values ('SCHL', 'Schlatter 5')
 
 --ALTER TABLE machines ALTER COLUMN hour9 set DEFAULT 0
+-- ALTER TABLE machines
+--     ADD COLUMN last_stop TIME
