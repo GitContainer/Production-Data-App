@@ -289,9 +289,9 @@ def getVelocities():
         d["schl4"] = row.schl4
         d["schl5"] = row.schl5
         d["schl7"] = row.schl7
-        row_number = "row" + str(i)
+        row_number = str(i)
         i += 1
         D[row_number] = d
         del d
-    new_velocities = json.dumps(D)
+    new_velocities = json.dumps(D, sort_keys=True)
     emit('new_velocities', new_velocities, broadcast=False)

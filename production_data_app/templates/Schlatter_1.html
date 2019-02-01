@@ -40,7 +40,8 @@
                     <h2 class="h6 text-uppercase mb-0">Últimpo paro</h2>
                 </div>
                 <div class="card-body" style="text-align: center;">
-                    <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros registrados desde la carga de la página</label>
+                    <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros
+                        registrados desde la última carga de la página</label>
                 </div>
             </div>
         </div>
@@ -75,7 +76,7 @@
                     <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad</h2>
                 </div>
                 <div class="card-body">
-                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 9 minutos</label>
+                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 8 minutos</label>
                     <canvas id="Velocities" style="height: 355px; width: 100%;  position:absolute; top:27%;"></canvas>
                 </div>
             </div>
@@ -254,28 +255,29 @@
             }
         });
         socket.on('new_velocities', function (new_velocities) {
-            if (start_time != "None"){
-            var json_vel = JSON.parse(new_velocities);
-            timeline = [];
-            velocities = [];
-            for (var k in json_vel) {
-                timeline.push(json_vel[k].timestamp);
-                velocities.push(json_vel[k].schl1);
-            }
-            if (velocities.length > 80) {
-                timeline = timeline.slice(-80);
-                velocities = velocities.slice(-80);
-            }
-            chartVel.data.labels = timeline;
-            chartVel.data.datasets[0].data = velocities;
-            chartVel.update();
-            if (velocities.slice(-1) != 0) {
-                StopState = false;
-            }
-            if (velocities.slice(-1) == 0 && StopState == false) {
-                StopState = true;
-                document.querySelector("#last_stop").innerHTML = json_vel[k].timestamp;
-            }
+            if (start_time != "None") {
+                var json_vel = JSON.parse(new_velocities);
+                timeline = [];
+                velocities = [];
+                var n = Object.keys(json_vel).length;
+                for (var i=0; i<n; i++){
+                    timeline.push(json_vel[i]["timestamp"]);
+                    velocities.push(json_vel[i]["mg320"])
+                }
+                if (velocities.length > 80) {
+                    timeline = timeline.slice(-80);
+                    velocities = velocities.slice(-80);
+                }
+                chartVel.data.labels = timeline;
+                chartVel.data.datasets[0].data = velocities;
+                chartVel.update();
+                if (velocities.slice(-1) != 0) {
+                    StopState = false;
+                }
+                if (velocities.slice(-1) == 0 && StopState == false) {
+                    StopState = true;
+                    document.querySelector("#last_stop").innerHTML = json_vel[n-1]["timestamp"];
+                }
             }
         });
     }

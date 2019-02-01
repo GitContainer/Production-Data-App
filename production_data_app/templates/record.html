@@ -44,10 +44,21 @@
     var json = JSON.parse(new_data);
     for(var k in json) {
       var row = table.insertRow(-1);
-      for(var l in json[k]) {
-        var cell = row.insertCell(-1);
-        cell.innerHTML = json[k][l];
-      }
+      var cell;
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["date"];
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["shift"];
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["machine"];
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["start_hour"];
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["stop_time"];
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["stops"];
+      cell = row.insertCell(-1);
+      cell.innerHTML = json[k]["hits"];
     }
   });
 </script>

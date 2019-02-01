@@ -40,7 +40,8 @@
                     <h2 class="h6 text-uppercase mb-0">Últimpo paro</h2>
                 </div>
                 <div class="card-body" style="text-align: center;">
-                    <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros registrados desde la carga de la página</label>
+                    <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros
+                        registrados desde la útlima carga de la página</label>
                 </div>
             </div>
         </div>
@@ -75,7 +76,7 @@
                     <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad</h2>
                 </div>
                 <div class="card-body">
-                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 9 minutos</label>
+                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 8 minutos</label>
                     <canvas id="Velocities" style="height: 355px; width: 100%;  position:absolute; top:27%;"></canvas>
                 </div>
             </div>
@@ -225,57 +226,60 @@
             socket.emit('getVelocities');
         }
         socket.on('new_data', function (new_data) {
-            var json = JSON.parse(new_data);
-            start_time = json['Schlatter5']['start_time'];
-            var stop_time = json['Schlatter5']['stop_time'];
-            var stops = json['Schlatter5']['stops'];
-            var array = [json['Schlatter5']['hour0'], json['Schlatter5']['hour1'], json['Schlatter5']['hour2'], json['Schlatter5']['hour3'], json['Schlatter5']['hour4'], json['Schlatter5']['hour5'], json['Schlatter5']['hour6'], json['Schlatter5']['hour7'], json['Schlatter5']['hour8'], json['Schlatter5']['hour9']];
-            data = getDifference(array);
-            chartPPH.data.datasets[0].data = data;
-            chartPPH.update();
-            if (Number.isInteger(stops)) {
-                document.querySelector("#stops").innerHTML = stops;
-            }
-            if (start_time == "None") {
-                document.querySelector("#start_time").innerHTML = "No ha iniciado la máquina";
-            }
-            else {
-                document.querySelector("#start_time").innerHTML = start_time;
-            }
-            if (stop_time == "None") {
-                document.querySelector("#hours").innerHTML = "0  hora(s)";
-                document.querySelector("#minutes").innerHTML = "0  minutos(s)";
-                document.querySelector("#seconds").innerHTML = "0  segundos(s)";
-            }
-            else {
-                document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
-                document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
-                document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
+            if (start_time != "None") {
+                var json = JSON.parse(new_data);
+                start_time = json['Schlatter5']['start_time'];
+                var stop_time = json['Schlatter5']['stop_time'];
+                var stops = json['Schlatter5']['stops'];
+                var array = [json['Schlatter5']['hour0'], json['Schlatter5']['hour1'], json['Schlatter5']['hour2'], json['Schlatter5']['hour3'], json['Schlatter5']['hour4'], json['Schlatter5']['hour5'], json['Schlatter5']['hour6'], json['Schlatter5']['hour7'], json['Schlatter5']['hour8'], json['Schlatter5']['hour9']];
+                data = getDifference(array);
+                chartPPH.data.datasets[0].data = data;
+                chartPPH.update();
+                if (Number.isInteger(stops)) {
+                    document.querySelector("#stops").innerHTML = stops;
+                }
+                if (start_time == "None") {
+                    document.querySelector("#start_time").innerHTML = "No ha iniciado la máquina";
+                }
+                else {
+                    document.querySelector("#start_time").innerHTML = start_time;
+                }
+                if (stop_time == "None") {
+                    document.querySelector("#hours").innerHTML = "0  hora(s)";
+                    document.querySelector("#minutes").innerHTML = "0  minutos(s)";
+                    document.querySelector("#seconds").innerHTML = "0  segundos(s)";
+                }
+                else {
+                    document.querySelector("#hours").innerHTML = (String(stop_time.slice(0, 2)) + "  hora(s)");
+                    document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
+                    document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
+                }
             }
         });
         socket.on('new_velocities', function (new_velocities) {
-            if (start_time != "None"){
-            var json_vel = JSON.parse(new_velocities);
-            timeline = [];
-            velocities = [];
-            for (var k in json_vel) {
-                timeline.push(json_vel[k].timestamp);
-                velocities.push(json_vel[k].schl5);
-            }
-            if (velocities.length > 80) {
-                timeline = timeline.slice(-80);
-                velocities = velocities.slice(-80);
-            }
-            chartVel.data.labels = timeline;
-            chartVel.data.datasets[0].data = velocities;
-            chartVel.update();
-            if (velocities.slice(-1) != 0) {
-                StopState = false;
-            }
-            if (velocities.slice(-1) == 0 && StopState == false) {
-                StopState = true;
-                document.querySelector("#last_stop").innerHTML = json_vel[k].timestamp;
-            }
+            if (start_time != "None") {
+                var json_vel = JSON.parse(new_velocities);
+                timeline = [];
+                velocities = [];
+                var n = Object.keys(json_vel).length;
+                for (var i=0; i<n; i++){
+                    timeline.push(json_vel[i]["timestamp"]);
+                    velocities.push(json_vel[i]["mg320"])
+                }
+                if (velocities.length > 80) {
+                    timeline = timeline.slice(-80);
+                    velocities = velocities.slice(-80);
+                }
+                chartVel.data.labels = timeline;
+                chartVel.data.datasets[0].data = velocities;
+                chartVel.update();
+                if (velocities.slice(-1) != 0) {
+                    StopState = false;
+                }
+                if (velocities.slice(-1) == 0 && StopState == false) {
+                    StopState = true;
+                    document.querySelector("#last_stop").innerHTML = json_vel[n-1]["timestamp"];
+                }
             }
         });
     }
