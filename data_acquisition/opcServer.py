@@ -47,26 +47,20 @@ def connectPLC(ipadress):
             return (plc, "Error: Unknown")
 
 
-def gatherProductionData(plc):
-    Sch4 = ReadMemory(plc, 28, 0, S7WLDWord)
-    Sch5 = ReadMemory(plc, 4, 0, S7WLDWord)
-    Sch7 = ReadMemory(plc, 8, 0, S7WLDWord)
-    Jager = ReadMemory(plc, 12, 0, S7WLDWord)
-    Sch1 = ReadMemory(plc, 16, 0, S7WLDWord)
-    MG320 = ReadMemory(plc, 20, 0, S7WLDWord)
-    PG12 = ReadMemory(plc, 24, 0, S7WLDWord)
-
-    machines_production = {"SCHL4": Sch4,
-                           "SCHL5": Sch5,
-                           "SCHL7": Sch7,
-                           "JAGER": Jager,
-                           "SCHL1": Sch1,
-                           "MG320": MG320,
-                           "5S07": PG12}
+def getProductionData(plc):
+    machines_production = {
+        "SCHL4": ReadMemory(plc, 28, 0, S7WLDWord),
+        "SCHL5": ReadMemory(plc, 4, 0, S7WLDWord),
+        "SCHL7": ReadMemory(plc, 8, 0, S7WLDWord),
+        "JAGER": ReadMemory(plc, 12, 0, S7WLDWord),
+        "SCHL1": ReadMemory(plc, 16, 0, S7WLDWord),
+        "MG320": ReadMemory(plc, 20, 0, S7WLDWord),
+        "5S07": ReadMemory(plc, 24, 0, S7WLDWord)
+    }
     return machines_production
 
 
-def gatherStartTime(plc, machine):
+def getStartTime(plc, machine):
     if machine == "SCHL4":
         hour = ReadMemory(plc, 146, 0, S7WLWord)
         minute = ReadMemory(plc, 148, 0, S7WLWord)
@@ -104,26 +98,20 @@ def gatherStartTime(plc, machine):
         return datetime.time(hour, minute, second)
 
 
-def gatherStopTime(plc):
-    Sch4 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 60, 0, S7WLDWord)))
-    Sch5 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 64, 0, S7WLDWord)))
-    Sch7 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 68, 0, S7WLDWord)))
-    Jager = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 72, 0, S7WLDWord)))
-    Sch1 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 76, 0, S7WLDWord)))
-    MG320 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 80, 0, S7WLDWord)))
-    PG12 = strftime('%H:%M:%S', gmtime(ReadMemory(plc, 84, 0, S7WLDWord)))
-
-    machines_stoptime = {"SCHL4": Sch4,
-                         "SCHL5": Sch5,
-                         "SCHL7": Sch7,
-                         "JAGER": Jager,
-                         "SCHL1": Sch1,
-                         "MG320": MG320,
-                         "5S07": PG12}
+def getStopTime(plc):
+    machines_stoptime = {
+        "SCHL4": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 60, 0, S7WLDWord))),
+        "SCHL5": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 64, 0, S7WLDWord))),
+        "SCHL7": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 68, 0, S7WLDWord))),
+        "JAGER": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 72, 0, S7WLDWord))),
+        "SCHL1": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 76, 0, S7WLDWord))),
+        "MG320": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 80, 0, S7WLDWord))),
+        "5S07": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 84, 0, S7WLDWord)))
+    }
     return machines_stoptime
 
 
-def gatherVelocities(plc, old_velocities):
+def getVelocities(plc, old_velocities):
     Sch4 = float(ReadMemory(plc, 32, 0, S7WLDWord))
     if Sch4 != 0:
         Sch4 = int(60000 / Sch4)
@@ -166,43 +154,33 @@ def gatherVelocities(plc, old_velocities):
     return (new_velocities, in_stop_state)
 
 
-def gatherStops(plc):
-    Sch4 = ReadMemory(plc, 108, 0, S7WLWord)
-    Sch5 = ReadMemory(plc, 110, 0, S7WLWord)
-    Sch7 = ReadMemory(plc, 112, 0, S7WLWord)
-    Jager = ReadMemory(plc, 114, 0, S7WLWord)
-    Sch1 = ReadMemory(plc, 116, 0, S7WLWord)
-    MG320 = ReadMemory(plc, 118, 0, S7WLWord)
-    PG12 = ReadMemory(plc, 120, 0, S7WLWord)
+def getStops(plc):
 
-    machines_stops = {"SCHL4": Sch4,
-                      "SCHL5": Sch5,
-                      "SCHL7": Sch7,
-                      "JAGER": Jager,
-                      "SCHL1": Sch1,
-                      "MG320": MG320,
-                      "5S07": PG12}
+    machines_stops = {
+        "SCHL4": ReadMemory(plc, 108, 0, S7WLWord),
+        "SCHL5": ReadMemory(plc, 110, 0, S7WLWord),
+        "SCHL7": ReadMemory(plc, 112, 0, S7WLWord),
+        "JAGER": ReadMemory(plc, 114, 0, S7WLWord),
+        "SCHL1": ReadMemory(plc, 116, 0, S7WLWord),
+        "MG320": ReadMemory(plc, 118, 0, S7WLWord),
+        "5S07": ReadMemory(plc, 120, 0, S7WLWord)
+    }
     return machines_stops
 
 
 def checkStart(plc):
-    Sch4 = ReadMemory(plc, 106, 0, S7WLBit)
-    Sch5 = ReadMemory(plc, 106, 1, S7WLBit)
-    Sch7 = ReadMemory(plc, 106, 2, S7WLBit)
-    Jager = ReadMemory(plc, 106, 3, S7WLBit)
-    Sch1 = ReadMemory(plc, 106, 4, S7WLBit)
-    MG320 = ReadMemory(plc, 106, 5, S7WLBit)
-    PG12 = ReadMemory(plc, 106, 6, S7WLBit)
 
-    machines_start = {"SCHL4": Sch4,
-                      "SCHL5": Sch5,
-                      "SCHL7": Sch7,
-                      "JAGER": Jager,
-                      "SCHL1": Sch1,
-                      "MG320": MG320,
-                      "5S07": PG12,
-                      "EVG": False,
-                      "SCHL6": False}
+    machines_start = {
+        "SCHL4": ReadMemory(plc, 106, 0, S7WLBit),
+        "SCHL5": ReadMemory(plc, 106, 1, S7WLBit),
+        "SCHL7": ReadMemory(plc, 106, 2, S7WLBit),
+        "JAGER": ReadMemory(plc, 106, 3, S7WLBit),
+        "SCHL1": ReadMemory(plc, 106, 4, S7WLBit),
+        "MG320": ReadMemory(plc, 106, 5, S7WLBit),
+        "5S07": ReadMemory(plc, 106, 6, S7WLBit),
+        "EVG": False,
+        "SCHL6": False
+    }
     return machines_start
 
 
@@ -222,12 +200,13 @@ def closeSQL(conn, cur):
     cur.close()
     conn.close()
 
+
 def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state):
     for key in machines_status.keys():
         if key != "SCHL6" and key != "EVG":
             if machines_status[key] == False and starts[key] == True:
                 machines_status[key] = True
-                start_times[key] = str(gatherStartTime(plc, key))
+                start_times[key] = str(getStartTime(plc, key))
                 query = ('UPDATE machines SET start_hour = %s where id = %s')
                 values = (start_times[key], key)
                 cur.execute(query, values)
@@ -267,7 +246,8 @@ def storeData(cur, shift, starts, stoptimes, stops, hits, machines_status, start
 
 
 def getMachine(id):
-    D = {"SCHL4": "Schlatter 4",
+    D = {
+        "SCHL4": "Schlatter 4",
          "SCHL5": "Schlatter 5",
          "SCHL7": "Schlatter 7",
          "JAGER": "Jager",
@@ -275,7 +255,8 @@ def getMachine(id):
          "MG320": "MG320",
          "5S07": "PG12",
          "EVG": "EVG",
-         "SCHL6": "Schlatter 6"}
+         "SCHL6": "Schlatter 6"
+    }
     return D[id]
 
 
@@ -316,7 +297,8 @@ def emptyTable(cur):
                 hour6 = 0,
                 hour7 = 0,
                 hour8 = 0,
-                hour9 = 0"""
+                hour9 = 0, 
+                last_stop = null"""
     cur.execute(query)
     query = "DELETE FROM velocities WHERE 1 = 1"
     cur.execute(query)
@@ -466,10 +448,10 @@ if __name__ == "__main__":
                     while True:
                         try:
                             starts = checkStart(plc)
-                            hits = gatherProductionData(plc)
-                            stoptimes = gatherStopTime(plc)
-                            velocities, in_stop_state = gatherVelocities(plc, velocities)
-                            stops = gatherStops(plc)
+                            hits = getProductionData(plc)
+                            stoptimes = getStopTime(plc)
+                            velocities, in_stop_state = getVelocities(plc, velocities)
+                            stops = getStops(plc)
                         except:
                             log.write("Connection to PLC lost")
                             log.write("\n")
