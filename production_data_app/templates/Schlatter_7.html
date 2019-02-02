@@ -93,7 +93,18 @@
     var lineValue = 0;
     var StopState;
     var labels;
+
     window.onload = function () {
+        try {
+            if ('lineValueSchl7' in localStorage) {
+                lineValue = localStorage.getItem('lineValueSchl7');
+            } else {
+                localStorage.setItem('lineValueSchl7', lineValue);
+            }
+        }
+        catch (err) {
+            {}
+        }
         var date = new Date();
         var utcDate = new Date(date.toUTCString());
         hour = utcDate.getHours();
@@ -292,6 +303,7 @@
     }
     function graphLine() {
         lineValue = document.getElementById('goal').value;
+        localStorage.setItem('lineValueSchl7', lineValue);
         chartPPH.options.annotation.annotations[0].value = lineValue;
         chartPPH.update();
     }

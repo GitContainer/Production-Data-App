@@ -93,7 +93,18 @@
     var lineValue = 0;
     var StopState;
     var labels;
+
     window.onload = function () {
+        try {
+            if ('lineValueJager' in localStorage) {
+                lineValue = localStorage.getItem('lineValueJager');
+            } else {
+                localStorage.setItem('lineValueJager', lineValue);
+            }
+        }
+        catch (err) {
+            {}
+        }
         var date = new Date();
         var utcDate = new Date(date.toUTCString());
         hour = utcDate.getHours();
@@ -254,7 +265,7 @@
                 document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
                 document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
             }
-            if (last_stop != "None"){
+            if (last_stop != "None") {
                 document.querySelector("#last_stop").innerHTML = last_stop;
             }
         });
@@ -264,7 +275,7 @@
                 timeline = [];
                 velocities = [];
                 var n = Object.keys(json_vel).length;
-                for (var i=0; i<n; i++){
+                for (var i = 0; i < n; i++) {
                     timeline.push(json_vel[i]["timestamp"]);
                     velocities.push(json_vel[i]["jager"])
                 }
@@ -292,6 +303,7 @@
     }
     function graphLine() {
         lineValue = document.getElementById('goal').value;
+        localStorage.setItem('lineValueJager', lineValue);
         chartPPH.options.annotation.annotations[0].value = lineValue;
         chartPPH.update();
     }

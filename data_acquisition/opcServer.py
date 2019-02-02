@@ -456,7 +456,6 @@ if __name__ == "__main__":
                             log.write("Connection to PLC lost")
                             log.write("\n")
                         else:
-                            print("updating")
                             hour = datetime.datetime.now().strftime('%H:%M:%S')
                             if i % 5 == 0:
                                 uploadVelocities(cur, velocities, hour)
@@ -472,6 +471,7 @@ if __name__ == "__main__":
                     while endOfShift(plc) == 1:
                         pass
                     resetAKS(plc)
+                    print("Sended AKS")
                     closeSQL(conn, cur)
                 else:
                     log.write(str(cur))
