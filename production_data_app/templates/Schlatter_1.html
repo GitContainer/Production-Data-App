@@ -41,7 +41,7 @@
                 </div>
                 <div class="card-body" style="text-align: center;">
                     <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros
-                        registrados desde la última carga de la página</label>
+                        registrados hasta el momento</label>
                 </div>
             </div>
         </div>
@@ -228,6 +228,7 @@
         socket.on('new_data', function (new_data) {
             var json = JSON.parse(new_data);
             start_time = json['Schlatter1']['start_time'];
+            var last_stop = json['Schlatter1']['last_stop'];
             var stop_time = json['Schlatter1']['stop_time'];
             var stops = json['Schlatter1']['stops'];
             var array = [json['Schlatter1']['hour0'], json['Schlatter1']['hour1'], json['Schlatter1']['hour2'], json['Schlatter1']['hour3'], json['Schlatter1']['hour4'], json['Schlatter1']['hour5'], json['Schlatter1']['hour6'], json['Schlatter1']['hour7'], json['Schlatter1']['hour8'], json['Schlatter1']['hour9']];
@@ -253,6 +254,9 @@
                 document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
                 document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
             }
+            if (last_stop != "None"){
+                document.querySelector("#last_stop").innerHTML = last_stop;
+            }
         });
         socket.on('new_velocities', function (new_velocities) {
             if (start_time != "None") {
@@ -271,13 +275,6 @@
                 chartVel.data.labels = timeline;
                 chartVel.data.datasets[0].data = velocities;
                 chartVel.update();
-                if (velocities.slice(-1) != 0) {
-                    StopState = false;
-                }
-                if (velocities.slice(-1) == 0 && StopState == false) {
-                    StopState = true;
-                    document.querySelector("#last_stop").innerHTML = json_vel[n-1]["timestamp"];
-                }
             }
         });
     }

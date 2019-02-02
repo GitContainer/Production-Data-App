@@ -41,7 +41,7 @@
                 </div>
                 <div class="card-body" style="text-align: center;">
                     <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros
-                        registrados desde la útlima carga de la página</label>
+                        registrados hasta el momento</label>
                 </div>
             </div>
         </div>
@@ -228,6 +228,7 @@
         socket.on('new_data', function (new_data) {
             var json = JSON.parse(new_data);
             start_time = json['Jager']['start_time'];
+            var last_stop = json['JAGER']['last_stop'];
             var stop_time = json['Jager']['stop_time'];
             var stops = json['Jager']['stops'];
             var array = [json['Jager']['hour0'], json['Jager']['hour1'], json['Jager']['hour2'], json['Jager']['hour3'], json['Jager']['hour4'], json['Jager']['hour5'], json['Jager']['hour6'], json['Jager']['hour7'], json['Jager']['hour8'], json['Jager']['hour9']];
@@ -253,6 +254,9 @@
                 document.querySelector("#minutes").innerHTML = (String(stop_time.slice(3, 5)) + "  minutos(s)");
                 document.querySelector("#seconds").innerHTML = (String(stop_time.slice(6, 8)) + "  segundos(s)");
             }
+            if (last_stop != "None"){
+                document.querySelector("#last_stop").innerHTML = last_stop;
+            }
         });
         socket.on('new_velocities', function (new_velocities) {
             if (start_time != "None") {
@@ -271,13 +275,6 @@
                 chartVel.data.labels = timeline;
                 chartVel.data.datasets[0].data = velocities;
                 chartVel.update();
-                if (velocities.slice(-1) != 0) {
-                    StopState = false;
-                }
-                if (velocities.slice(-1) == 0 && StopState == false) {
-                    StopState = true;
-                    document.querySelector("#last_stop").innerHTML = json_vel[m-1]["timestamp"];
-                }
             }
         });
     }

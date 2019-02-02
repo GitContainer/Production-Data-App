@@ -128,6 +128,7 @@ def refreshData():
                 {
                     "start_time": str(mg320.start_hour),
                     "stop_time": str(mg320.stop_time),
+                    "last_stop": str(mg320.last_stop),
                     "stops": mg320.stops,
                     "velocity": mg320.velocity,
                     "hits": mg320.hits,
@@ -146,6 +147,7 @@ def refreshData():
                     {
                         "start_time": str(pg12.start_hour),
                         "stop_time": str(pg12.stop_time),
+                        "last_stop": str(pg12.last_stop),
                         "stops": pg12.stops,
                         "velocity": pg12.velocity,
                         "hits": pg12.hits,
@@ -164,6 +166,7 @@ def refreshData():
                     {
                         "start_time": str(jager.start_hour),
                         "stop_time": str(jager.stop_time),
+                        "last_stop": str(jager.last_stop),
                         "stops": jager.stops,
                         "velocity": jager.velocity,
                         "hits": jager.hits,
@@ -182,6 +185,7 @@ def refreshData():
                     {
                         "start_time": str(schl1.start_hour),
                         "stop_time": str(schl1.stop_time),
+                        "last_stop": str(schl1.last_stop),
                         "stops": schl1.stops,
                         "velocity": schl1.velocity,
                         "hits": schl1.hits,
@@ -200,6 +204,7 @@ def refreshData():
                     {
                         "start_time": str(schl4.start_hour),
                         "stop_time": str(schl4.stop_time),
+                        "last_stop": str(schl4.last_stop),
                         "stops": schl4.stops,
                         "velocity": schl4.velocity,
                         "hits": schl4.hits,
@@ -218,6 +223,7 @@ def refreshData():
                     {
                         "start_time": str(schl5.start_hour),
                         "stop_time": str(schl5.stop_time),
+                        "last_stop": str(schl5.last_stop),
                         "stops": schl5.stops,
                         "velocity": schl5.velocity,
                         "hits": schl5.hits,
@@ -236,6 +242,7 @@ def refreshData():
                     {
                         "start_time": str(schl7.start_hour),
                         "stop_time": str(schl7.stop_time),
+                        "last_stop": str(schl7.last_stop),
                         "stops": schl7.stops,
                         "velocity": schl7.velocity,
                         "hits": schl7.hits,
