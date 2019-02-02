@@ -8,6 +8,18 @@ import datetime
 import psycopg2
 
 def ReadMemory(plc, byte, bit, datatype):
+    """ 
+    Read internal memory variables from PLC.
+
+    args:
+        plc: plc object
+        byte: byte in which data is stored
+        bit: bit in which data is stored (in case of)
+        datatype: variable data type (refer to snap7types)
+
+    returns:
+        Variable from plc.
+    """
     result = plc.read_area(areas['MK'], 0, byte, datatype)
     if datatype == S7WLBit:
         return get_bool(result, 0, bit)
@@ -22,6 +34,16 @@ def ReadMemory(plc, byte, bit, datatype):
 
 
 def WriteMemory(plc, byte, bit, datatype, value):
+    """ 
+    Write into internal memory variables of PLC.
+
+    args:
+        plc: plc object
+        byte: byte in which data is stored
+        bit: bit in which data is stored (in case of)
+        datatype: variable data type (refer to snap7types)
+        value: new value of variable
+    """    
     result = plc.read_area(areas['MK'], 0, byte, datatype)
     if datatype == S7WLBit:
         set_bool(result, 0, bit, value)
@@ -35,6 +57,16 @@ def WriteMemory(plc, byte, bit, datatype, value):
 
 
 def connectPLC(ipadress):
+    """ 
+    Connects via OPC to plc.
+
+    args:
+        ipadress: ip adress of the plc's network card
+
+    returns:
+        plc: object with connection to plc
+        status: Message with status of the connection to plc
+    """    
     plc = c.Client()
     try:
         plc.connect(ipadress, 0, 1)
@@ -48,6 +80,15 @@ def connectPLC(ipadress):
 
 
 def getProductionData(plc):
+    """ 
+    Retrieves all the production (hits) of each machine.
+
+    args:
+        plc: plc object
+
+    returns:
+        Dictionary with each machine's hits
+    """    
     machines_production = {
         "SCHL4": ReadMemory(plc, 28, 0, S7WLDWord),
         "SCHL5": ReadMemory(plc, 4, 0, S7WLDWord),
@@ -61,6 +102,15 @@ def getProductionData(plc):
 
 
 def getStartTime(plc, machine):
+    """ 
+    Retrieves hour, time and second a machine start time.
+
+    args:
+        plc: plc object
+        machine: the machine we want to get it's start time
+    returns:
+        Time object
+    """
     if machine == "SCHL4":
         hour = ReadMemory(plc, 146, 0, S7WLWord)
         minute = ReadMemory(plc, 148, 0, S7WLWord)
@@ -99,6 +149,15 @@ def getStartTime(plc, machine):
 
 
 def getStopTime(plc):
+    """ 
+    Retrieves the time that each machine has been in stop state.
+
+    args:
+        plc: plc object
+
+    returns:
+        Dictionary with each machine's stop time.
+    """  
     machines_stoptime = {
         "SCHL4": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 60, 0, S7WLDWord))),
         "SCHL5": strftime('%H:%M:%S', gmtime(ReadMemory(plc, 64, 0, S7WLDWord))),
@@ -112,6 +171,19 @@ def getStopTime(plc):
 
 
 def getVelocities(plc, old_velocities):
+    """ 
+    Retrieves in miliseconds the time between each hit of every machine and then
+    it is converted to hits per minute. Also this function tells wether a machine
+    is in stop state.
+
+    args:
+        plc: plc object
+        old_velocities: dictionary containing the velocities of the last cycle
+
+    returns:
+        new_velocities: dictionary with each machine's velocity.
+        in_stop_state: list with the key string of the machines in stop state.
+    """ 
     Sch4 = float(ReadMemory(plc, 32, 0, S7WLDWord))
     if Sch4 != 0:
         Sch4 = int(60000 / Sch4)
@@ -155,7 +227,15 @@ def getVelocities(plc, old_velocities):
 
 
 def getStops(plc):
+    """ 
+    Retrieves the number of times each machine has been in stop state.
 
+    args:
+        plc: plc object
+
+    returns:
+        Dictionary with each machine's number of stop states.
+    """ 
     machines_stops = {
         "SCHL4": ReadMemory(plc, 108, 0, S7WLWord),
         "SCHL5": ReadMemory(plc, 110, 0, S7WLWord),
@@ -169,7 +249,15 @@ def getStops(plc):
 
 
 def checkStart(plc):
+    """ 
+    Checks if a machine has already started working.
 
+    args:
+        plc: plc object
+
+    returns:
+        Dictionary with the boolean state of each machine.
+    """ 
     machines_start = {
         "SCHL4": ReadMemory(plc, 106, 0, S7WLBit),
         "SCHL5": ReadMemory(plc, 106, 1, S7WLBit),
@@ -185,6 +273,19 @@ def checkStart(plc):
 
 
 def connectSQL(user, password, host, database):
+    """ 
+    Connects to the server's data base.
+
+    args:
+        user: name of the data base manager
+        password: password of the data base manager
+        host: address in which the database is located
+        database: the name of the data base we want to connect
+
+    returns:
+        cur: object that handles queries
+        conn: object with connection to db
+    """  
     conn = None
     try:
         conn = psycopg2.connect(
@@ -197,11 +298,37 @@ def connectSQL(user, password, host, database):
 
 
 def closeSQL(conn, cur):
+    """
+    Closes the connection to the database.
+
+    args:
+        cur: object that handles queries
+        conn: object with connection to db
+    """
     cur.close()
     conn.close()
 
 
 def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state):
+    """
+    Uploads all the general data of every machine to the db every cycle.
+
+    args:
+        cur: object that handles queries
+        starts: dictionary with the boolean state of each machine
+        stoptimes: dictionary with the time of each machine being in stop state
+        stops: dictionary withe the number of times each machine has been in stop state
+        velocities: dictionary with the actual velocities of each machine
+        hits: dictionary with the actual production of each machine
+        hour: the time in which the actual cycle is being running
+        machine_status: auxiliar boolean dictionary of each machine's "has started working" 
+        start_times: dictionary with each machine's start times.
+        in_stop_state: list with the machines that currently are in stop state
+
+    returns:
+        machine_status: auxiliar dictionary updated with each machine's "has started working" boolean state
+        start_times: dictionary with each machine's start times updated.
+    """
     for key in machines_status.keys():
         if key != "SCHL6" and key != "EVG":
             if machines_status[key] == False and starts[key] == True:
@@ -223,6 +350,14 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_s
 
 
 def uploadVelocities(cur, velocities, hour):
+    """
+    Uploads the actual velocity of each machine with a time stamp to the db
+
+    args:
+        cur: object that handles queries
+        velocities: dictionary with each machine's velocities
+        hour: actual cycle local time
+    """
     query = """INSERT INTO velocities 
     (timestamp, mg320, pg12, evg, jager, schl1, schl4, schl5, schl6, schl7)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -232,7 +367,19 @@ def uploadVelocities(cur, velocities, hour):
     cur.execute(query, values)
 
 
-def storeData(cur, shift, starts, stoptimes, stops, hits, machines_status, start_times):
+def storeData(cur, shift, stoptimes, stops, hits, machines_status, start_times):
+    """
+    Uploads all the important production data to db at the end of every shift with the date
+
+    args:
+        cur: object that handles queries
+        shift: number of shift (1: morning, 2: evening, 3: night)
+        stoptimes: dictionary with the time of each machine being in stop state
+        stops: dictionary withe the number of times each machine has been in stop state
+        hits: dictionary with the actual production of each machine
+        machine_status: auxiliar boolean dictionary of each machine's "has started working"
+        start_times: dictionary with each machine's start times.
+    """
     date = dt.strftime("%A %d/%m/%Y")
     for key in machines_status.keys():
         if machines_status[key] is True:
@@ -246,6 +393,15 @@ def storeData(cur, shift, starts, stoptimes, stops, hits, machines_status, start
 
 
 def getMachine(id):
+    """
+    Gets the name of a machine.
+
+    args:
+        id: key string of a machine
+
+    returns:
+        String containing the machine's name.
+    """
     D = {
         "SCHL4": "Schlatter 4",
          "SCHL5": "Schlatter 5",
@@ -261,6 +417,15 @@ def getMachine(id):
 
 
 def getShift(plc):
+    """
+    Gets the shift number from plc
+
+    args:
+        plc: plc object with connection to real plc
+    
+    returns:
+        Shift integer (1: morning, 2: evening, 3: night)
+    """
     if ReadMemory(plc, 0, 0, S7WLBit):
         return 1
     elif ReadMemory(plc, 0, 1, S7WLBit):
@@ -270,18 +435,22 @@ def getShift(plc):
 
 
 def endOfShift(plc):
+    """Gets a boolean from plc indicating if the shift has ended"""
     return ReadMemory(plc, 1, 1, S7WLBit)
 
 
 def AKS(plc):
+    """Python tells plc that the data has been stored succesfully so the plc can erase it"""
     WriteMemory(plc, 0, 7, S7WLBit, True)
 
 
 def resetAKS(plc):
+    """Reset AKS variable of the plc"""
     WriteMemory(plc, 0, 7, S7WLBit, False)
 
 
 def emptyTable(cur):
+    """Erase all the values in the db tables"""
     query = """UPDATE machines
                 SET hits = 0,
                 velocity = 0,
@@ -305,6 +474,7 @@ def emptyTable(cur):
 
 
 def getHourPos():
+    """Gets the number of actual hour (First hour, second hour, etc...)"""
     now = datetime.datetime.now()
     hour = now.hour
     minute = now.minute
@@ -326,6 +496,7 @@ def getHourPos():
 
 
 def getQuery(hourx):
+    """Auxiliar function that returns a string query based in the actual hour number (see getHourPos)"""
     if hourx == "hour0":
         query = """UPDATE machines 
                             SET stop_time = %s,
@@ -465,7 +636,7 @@ if __name__ == "__main__":
                             break
                         sleep(1)
                         i += 1
-                    storeData(cur, shift, starts, stoptimes, stops, hits, machines_status, start_times)
+                    storeData(cur, shift, stoptimes, stops, hits, machines_status, start_times)
                     conn.commit()
                     AKS(plc)
                     while endOfShift(plc) == 1:
