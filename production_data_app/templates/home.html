@@ -172,7 +172,7 @@
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script src="{{ url_for('static', filename='js/front.js') }}"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script> 
-        <!-- JavaScript code for autoupdating data-->
+        <!-- JavaScript code for autoupdating data every 1.5 seconds-->
         {% block script %}
         <script type="text/javascript" charset="utf-8">
           var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -184,43 +184,43 @@
           }
           socket.on('new_data', function(new_data) {
             var json = JSON.parse(new_data);
-            // MG320 data gathering
+            // MG320 data update
             document.querySelector('#starttimeMG320').innerHTML = json['MG320']['start_time'];
             document.querySelector('#stoptimeMG320').innerHTML = json['MG320']['stop_time'];
             document.querySelector('#stopsMG320').innerHTML = json['MG320']['stops'];
             document.querySelector('#velMG320').innerHTML = json['MG320']['velocity'];
             document.querySelector('#hitsMG320').innerHTML = json['MG320']['hits'];
-            // PG12 data gathering
+            // PG12 data update
             document.querySelector('#starttimePG12').innerHTML = json['PG12']['start_time'];
             document.querySelector('#stoptimePG12').innerHTML = json['PG12']['stop_time'];
             document.querySelector('#stopsPG12').innerHTML = json['PG12']['stops'];
             document.querySelector('#velPG12').innerHTML = json['PG12']['velocity'];
             document.querySelector('#hitsPG12').innerHTML = json['PG12']['hits'];
-            // Jager data gathering
+            // Jager data update
             document.querySelector('#starttimeJager').innerHTML = json['Jager']['start_time'];
             document.querySelector('#stoptimeJager').innerHTML = json['Jager']['stop_time'];
             document.querySelector('#stopsJager').innerHTML = json['Jager']['stops'];
             document.querySelector('#velJager').innerHTML = json['Jager']['velocity'];
             document.querySelector('#hitsJager').innerHTML = json['Jager']['hits'];
-            // Schlatter 1 data gathering
+            // Schlatter 1 data update
             document.querySelector('#starttimeSchlatter1').innerHTML = json['Schlatter1']['start_time'];
             document.querySelector('#stoptimeSchlatter1').innerHTML = json['Schlatter1']['stop_time'];
             document.querySelector('#stopsSchlatter1').innerHTML = json['Schlatter1']['stops'];
             document.querySelector('#velSchlatter1').innerHTML = json['Schlatter1']['velocity'];
             document.querySelector('#hitsSchlatter1').innerHTML = json['Schlatter1']['hits'];
-            // Schlatter 4 data gathering
+            // Schlatter 4 data update
             document.querySelector('#starttimeSchlatter4').innerHTML = json['Schlatter4']['start_time'];
             document.querySelector('#stoptimeSchlatter4').innerHTML = json['Schlatter4']['stop_time'];
             document.querySelector('#stopsSchlatter4').innerHTML = json['Schlatter4']['stops'];
             document.querySelector('#velSchlatter4').innerHTML = json['Schlatter4']['velocity'];
             document.querySelector('#hitsSchlatter4').innerHTML = json['Schlatter4']['hits'];
-            // Schlatter 5 data gathering
+            // Schlatter 5 data update
             document.querySelector('#starttimeSchlatter5').innerHTML = json['Schlatter5']['start_time'];
             document.querySelector('#stoptimeSchlatter5').innerHTML = json['Schlatter5']['stop_time'];
             document.querySelector('#stopsSchlatter5').innerHTML = json['Schlatter5']['stops'];
             document.querySelector('#velSchlatter5').innerHTML = json['Schlatter5']['velocity'];
             document.querySelector('#hitsSchlatter5').innerHTML = json['Schlatter5']['hits'];
-            // Schlatter 7 data gathering
+            // Schlatter 7 data update
             document.querySelector('#starttimeSchlatter7').innerHTML = json['Schlatter7']['start_time'];
             document.querySelector('#stoptimeSchlatter7').innerHTML = json['Schlatter7']['stop_time'];
             document.querySelector('#stopsSchlatter7').innerHTML = json['Schlatter7']['stops'];

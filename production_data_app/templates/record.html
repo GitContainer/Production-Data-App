@@ -33,12 +33,12 @@
 </section>
 {% endblock %}
 {% block script %}
+<!-- JavaScript code that request data once the page is loaded-->
 <script type="text/javascript" charset="utf-8">
   var socket = io.connect('http://' + document.domain + ':' + location.port);
   socket.on('connect', function() {
     socket.emit('get annual production');
   });
-
   socket.on('annual production', function(new_data) {
     var table = document.getElementById("myTable");
     var json = JSON.parse(new_data);

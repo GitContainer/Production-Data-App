@@ -5,6 +5,6 @@ mail
 
 
 requirements.txt
-comment code
+
 docker
 total golpes gráficas

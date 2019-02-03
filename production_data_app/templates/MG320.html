@@ -95,6 +95,7 @@
     var labels;
 
     window.onload = function () {
+        // Gets or sets variable on local storage for production per hour goal
         try {
             if ('lineValueMG320' in localStorage) {
                 lineValue = localStorage.getItem('lineValueMG320');
@@ -105,6 +106,7 @@
         catch (err) {
             {}
         }
+        // Checks the hour of the server so it can display the correct labels in the graph
         var date = new Date();
         var utcDate = new Date(date.toUTCString());
         hour = utcDate.getHours();
@@ -131,7 +133,7 @@
         var timeline = [0];
         var c1 = document.getElementById("PPH").getContext('2d');
         var c2 = document.getElementById("Velocities").getContext('2d');
-
+        // Creation of production per hour graph
         chartPPH = new Chart(c1, {
             type: 'bar',
             data: {
@@ -194,6 +196,7 @@
                 }
             }
         });
+        // Creation of realtime velocity graph
         chartVel = new Chart(c2, {
             type: 'line',
             data: {
@@ -225,6 +228,7 @@
         });
         var start_time = "None";
         var socket = io.connect('http://' + document.domain + ':' + location.port);
+        // Request data from the server every 1.5 seconds and 3 seconds, using web socket io
         socket.on('connect', function () {
             setInterval(update, 1500);
             setInterval(updateVel, 3000);
@@ -236,6 +240,7 @@
         function updateVel() {
             socket.emit('getVelocities');
         }
+        // Whenever receives the data from the server, updates the page content
         socket.on('new_data', function (new_data) {
             var json = JSON.parse(new_data);
             start_time = json['MG320']['start_time'];
@@ -269,6 +274,7 @@
                 document.querySelector("#last_stop").innerHTML = last_stop;
             }
         });
+        // Whenever receives the data from the server, updates the velocity graph
         socket.on('new_velocities', function (new_velocities) {
             if (start_time != "None") {
                 var json_vel = JSON.parse(new_velocities);
@@ -289,6 +295,7 @@
             }
         });
     }
+    // Function that receives total amount of production and gets the production per hour
     function getDifference(array) {
         var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         for (i = 0; i < array.length; i++) {
@@ -301,6 +308,7 @@
         }
         return data;
     }
+    // Function that graphs the horizontal line that represents the production per hour goal
     function graphLine() {
         lineValue = document.getElementById('goal').value;
         localStorage.setItem('lineValueMG320', lineValue);

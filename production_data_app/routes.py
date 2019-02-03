@@ -7,7 +7,10 @@ from flask_socketio import emit
 from production_data_app.models import User, Production, Velocity, Machine
 import collections
 
+# Amount of time flask is going to keep database queries results whenever it receives a consult
 CACHE_TIMEOUT = 1500
+
+# Create cahe object
 cache = SimpleCache()
 
 class cached(object):
@@ -26,6 +29,8 @@ class cached(object):
 
 @app.route("/")
 def index():
+    """Default page, if the user has alredy logged in he will be redirected to the home page, 
+    otherwise he is going to be redirected to the login page."""
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     else:
@@ -34,6 +39,10 @@ def index():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    """Login function that is only called by the login page whenever a user tries to login,
+    this function gets the submit information and verifies that the data matches with the db data.
+    If the information is validated, then the function redirects the user to the home page and creates
+    a login object for the user."""
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     error = None
@@ -51,6 +60,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+    """This function logs out the user using the login object, so the user will be automatically redirected to the login page"""
     logout_user()
     return redirect(url_for('login'))
 
@@ -58,65 +68,79 @@ def logout():
 @app.route("/home", methods=['GET'])
 @login_required
 def home():
+    """Redirects to the home page which has the main table (the one that has general information of all the machines"""
     return render_template('home.html')
 
 
 @app.route("/record", methods=['GET'])
 @login_required
 def record():
+    """Redirects to the record page which has the history record of the production data in a table"""
     return render_template('record.html')
 
 
 @app.route("/MG320", methods=['GET'])
 @login_required
 def MG320():
+    """Returns MG320 page which has detailed information about the real time production data of this machine"""
     return render_template('MG320.html')
 
 
 @app.route("/PG12", methods=['GET'])
 @login_required
 def PG12():
+    """Returns PG12 page which has detailed information about the real time production data of this machine"""
     return render_template('PG12.html')
 
 
 @app.route("/Jager", methods=['GET'])
 @login_required
 def Jager():
+    """Returns Jager page which has detailed information about the real time production data of this machine"""
     return render_template('Jager.html')
 
 
 @app.route("/Schlatter_1", methods=['GET'])
 @login_required
 def Schlatter_1():
+    """Returns Schlatter 1 page which has detailed information about the real time production data of this machine"""
     return render_template('Schlatter_1.html')
 
 
 @app.route("/Schlatter_4", methods=['GET'])
 @login_required
 def Schlatter_4():
+    """Returns Schlatter 4 page which has detailed information about the real time production data of this machine"""
     return render_template('Schlatter_4.html')
 
 
 @app.route("/Schlatter_5", methods=['GET'])
 @login_required
 def Schlatter_5():
+    """Returns Schlatter 5 page which has detailed information about the real time production data of this machine"""
     return render_template('Schlatter_5.html')
 
 
 @app.route("/Schlatter_7", methods=['GET'])
 @login_required
 def Schlatter_7():
+    """Returns Schlatter 7 page which has detailed information about the real time production data of this machine"""
     return render_template('Schlatter_7.html')
 
 
 @login_manager.user_loader
 def load_user(id):
+    """Function that returns the id number of a particular user"""
     return User.query.get(int(id))
 
 
 @socketio.on('getData')
 @cached()
 def refreshData():
+    """Function that gets called on a socket io request that downloads all the general information
+    about the machines from the data base, wrapps it into a dictionary and then it returns, whith 
+    a socket io emit, the dictionary parsed into a JSON format object"""
+
     mg320 = Machine.query.filter_by(id='MG320').first()
     pg12 = Machine.query.filter_by(id='5S07').first()
     jager = Machine.query.filter_by(id='JAGER').first()
@@ -264,6 +288,9 @@ def refreshData():
 @socketio.on('get annual production')
 @cached()
 def get_anual_production():
+    """Function that gets called on a socket io request that downloads all the record information
+    about the production from the data base, wrapps it into a dictionary and then it returns, whith 
+    a socket io emit, the dictionary parsed into a JSON format object"""
     production = Production.query.all()
     D = collections.OrderedDict()
     for row in production:
@@ -283,6 +310,9 @@ def get_anual_production():
 @socketio.on('getVelocities')
 @cached()
 def getVelocities():
+    """Function that gets called on a socket io request that downloads all the velocities values
+    about the machines from the data base, wrapps it into an ordered dictionary and then it returns, whith 
+    a socket io emit, the ordered dictionary parsed into a JSON format object"""
     velocities = Velocity.query.all()
     D = collections.OrderedDict()
     i = 0
