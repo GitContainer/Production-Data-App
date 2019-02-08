@@ -426,27 +426,41 @@ def getShift(plc):
     returns:
         Shift integer (1: morning, 2: evening, 3: night)
     """
-    if ReadMemory(plc, 0, 0, S7WLBit):
-        return 1
-    elif ReadMemory(plc, 0, 1, S7WLBit):
-        return 3
-    else:
-        return 0
+    try:
+        if ReadMemory(plc, 0, 0, S7WLBit):
+            return 1
+        elif ReadMemory(plc, 0, 1, S7WLBit):
+            return 3
+        else:
+            return 0
+    except:
+            return 0
 
 
 def endOfShift(plc):
     """Gets a boolean from plc indicating if the shift has ended"""
-    return ReadMemory(plc, 1, 1, S7WLBit)
+    try:
+        return ReadMemory(plc, 1, 1, S7WLBit)
+    except:
+        return False
 
 
 def AKS(plc):
     """Python tells plc that the data has been stored succesfully so the plc can erase it"""
-    WriteMemory(plc, 0, 7, S7WLBit, True)
+    try:
+        WriteMemory(plc, 0, 7, S7WLBit, True)
+        return True
+    except:
+        return False
 
 
 def resetAKS(plc):
     """Reset AKS variable of the plc"""
-    WriteMemory(plc, 0, 7, S7WLBit, False)
+    try:
+        WriteMemory(plc, 0, 7, S7WLBit, False)
+        return True
+    except:
+        return False
 
 
 def emptyTable(cur):
@@ -581,13 +595,19 @@ def getQuery(hourx):
 
 
 if __name__ == "__main__":
+    # Open log file
     log = open("log.txt", 'a+')
+    # Connect to PLC
     plc, statusPLC = connectPLC('192.168.8.100')
     if statusPLC == "Connected":
         while True:
-            if getShift(plc) != 0:
+            # Get shift number from plc
+            shift = getShift(plc)
+            if shift != 0:
+                # Connect to data base
                 conn, cur = connectSQL("postgres", "Autom2018", "localhost", "production_data")
                 if conn:
+                    # Initialize dictionaries
                     machines_status = {
                         "SCHL4": False,
                         "SCHL5": False,
@@ -611,12 +631,10 @@ if __name__ == "__main__":
                         "SCHL6": 0
                     }
                     start_times = {}
-                    emptyTable(cur)
-                    conn.commit()
                     print("Cleared table")
-                    shift = getShift(plc)
                     i = 0
                     while True:
+                        # Get all data from PLC
                         try:
                             starts = checkStart(plc)
                             hits = getProductionData(plc)
@@ -624,33 +642,48 @@ if __name__ == "__main__":
                             velocities, in_stop_state = getVelocities(plc, velocities)
                             stops = getStops(plc)
                         except:
-                            log.write("Connection to PLC lost")
-                            log.write("\n")
+                            pass
+                        # If successful, update data base
                         else:
                             hour = datetime.datetime.now().strftime('%H:%M:%S')
                             if i % 5 == 0:
                                 uploadVelocities(cur, velocities, hour)
                             machines_status, start_times = uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state)
                             conn.commit()
+                        # If shift has ended break loop
                         if endOfShift(plc) == 1:
                             break
                         sleep(1)
                         i += 1
+                    # Store important data of shift to data base
                     storeData(cur, shift, stoptimes, stops, hits, machines_status, start_times)
                     conn.commit()
-                    AKS(plc)
+                    # Wait until python succesfully sends AKS
+                    while not AKS(plc):
+                        pass
+                    # Wait until python succesfully receives answer from PLC
                     while endOfShift(plc) == 1:
                         pass
-                    resetAKS(plc)
+                    # Wait until python succesfully resets AKS variable
+                    while not resetAKS(plc):
+                        pass
                     print("Sended AKS")
+                    # Erase dynamic table content
+                    emptyTable(cur)
+                    conn.commit()
+                    # Close connection to data base
                     closeSQL(conn, cur)
                 else:
+                    # Write error to log file
                     log.write(str(cur))
                     log.write("\n")
             else:
+                # Sleep for 30 seconds meanwhile there is no activity
                 sleep(30)
                 print("Sleeping")
     else:
+        # Write error to log file
         log.write(statusPLC)
         log.write("\n")
+    # Close log file
     log.close()

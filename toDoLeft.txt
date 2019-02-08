@@ -2,9 +2,5 @@ filter dropdown list for annual production
 
 
 mail
-
-
-requirements.txt
-
-docker
 total golpes gráficas
+to excel button
