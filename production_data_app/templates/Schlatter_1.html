@@ -275,12 +275,10 @@
                 timeline = [];
                 velocities = [];
                 var n = Object.keys(json_vel).length;
-                // console.log(Object.keys(json_vel));
                 for (var i=0; i<n; i++){
                     timeline.push(json_vel[String(i)]["timestamp"]);
                     velocities.push(json_vel[String(i)]["schl1"]);
                 }
-                console.log(timeline[0]);
                 if (velocities.length > 80) {
                     timeline = timeline.slice(-80);
                     velocities = velocities.slice(-80);
