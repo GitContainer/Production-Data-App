@@ -1,28 +1,68 @@
-$ sudo add-apt-repository ppa:gijzelaar/snap7
-$ sudo apt-get update
-$ sudo apt-get install libsnap71 libsnap7-dev
+## Instructions
 
-## Edit a file
+1. Install snap7 library and nginx:
+    $ sudo add-apt-repository ppa:gijzelaar/snap7
+    $ sudo apt-get update
+    $ sudo apt-get install libsnap7-1 libsnap7-dev
+    $ sudo apt-get install nginx
+2. Configure nginx:
+    $ sudo /etc/init.d/nginx start
+    $ sudo rm /etc/nginx/sites-enabled/default
+    $ sudo touch /etc/nginx/sites-available/flask_settings
+    $ sudo ln -s /etc/nginx/sites-available/flask_settings /etc/nginx/sites-enabled/flask_settings
+    $ vi /etc/nginx/sites-enabled/flask_settings
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
-
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
-
----
-
-## Create a file
-
-Next, you’ll add a new file to this repository.
-
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
-
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+        server {
+                location / {
+                    proxy_pass http://127.0.0.1:8000;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr; 
+                }
+        }
+    
+    $ sudo /etc/init.d/nginx restart
+3. Install and configure postgresql
+4. Install pip:
+    $ sudo apt-get install python3-pip
+5. Install python's virtualenv:
+    $ pip3 install virtualenv
+6. Clone Project:
+    $ git clone https://github.com/JulioSanchezD/Production-Data-App.git
+7. On your main folder, run the following command:
+    $ virtualenv venv
+8. Create alias for virtualenv's activation:
+    $ cd
+    $ alias activate='source venv/bin/activate' > ~/.bashrc
+    $ source ~/.bashrc
+9. Activate virtualenv on main folder:
+    $ activate
+10. Install libraries:
+    $ pip install -r requirements.txt
+11. Modify __init__.py line: app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql                  +psycopg2://postgres:username@host/production_data'
+12. Modify /data_acquisition/create.py paths
+13. Create data base tables:
+    $ cd /data_acquisition/
+    $ python create.py
+14. Create users for login:
+    $ python userRegister.py
+15. Run the application for testing:
+    $ gunicorn --worker-class eventlet -w 3 run:app
+16. Install and configure supervisor:
+    $ sudo apt install supervisor
+    $ sudo nano /etc/supervisor/conf.d/production_data_app.conf
+        [program:production_data_app]
+        directory=/home/ubuntuadmin/applications/Production-Data-App
+        command=/home/ubuntuadmin/applications/Production-Data-App/venv/bin/gunicorn --worker-class eventlet -w 3 run:app
+        user=ubntuadmin
+        autostart=true
+        autorestart=true
+        stopasgroup=true
+        killasgroup=true
+        stderr_logfile=/var/log/production_data_app/production_data_app.err.log
+        stdout_logfile=/var/log/production_data_app/production_data_app.out.log
+17. Create log files (main folder):
+    $ sudo mkdir -p /var/log/production_data_app
+    $ sudo touch /var/log/production_data_app/production_data_app.err.log
+    $ sudo touch /var/log/production_data_app/production_data_app.out.log
+18. Run server:
+    $ sudo supervisorctl reload
