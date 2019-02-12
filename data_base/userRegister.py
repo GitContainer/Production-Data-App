@@ -21,24 +21,24 @@ bcrypt = Bcrypt(app)
 
 if __name__ == "__main__":
     #Creates the connection to the data base
-    conn, cur = connectSQL("postgres", "Autom2018", "localhost", "production_data")
+    conn, cur = connectSQL("postgres", "4RM453LDB", "localhost", "production_data")
 
     if conn:
         # Receive input data from the user in the console
         name = input("Ingresa un nombre: ")
         while not name.replace(" ", "").isalpha():
-            print("Ingrese un nombre válido")
+            print("Ingrese un nombre valido")
             name = input("Ingresa un nombre: ")
         while True:
             email = input("Ingresa un correo: ")
             if email.replace("@","").replace(".","").isalnum() and "@" in email:
                 break
             else:
-                print("Ingrese un correo válido")
-        password = input("Ingrese la contraseña: ")
+                print("Ingrese un correo valido")
+        password = input("Ingrese el password: ")
         while not password.isalnum():
-            print("Ingrese una contraseña válida")
-            password = input("Ingrese la contraseña: ")
+            print("Ingrese un password valido ese")
+            password = input("Ingrese el password: ")
 
         # Encrypt the password using bcrypt object before saving it in the database
         pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
