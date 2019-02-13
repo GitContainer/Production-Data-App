@@ -42,9 +42,9 @@ if __name__ == "__main__":
             	password = input("Ingrese el password: ")
             password2 = input("Repita la contraseña: ")
             if password == password2:
-		        break
-	        else:
-		        print("Las contraseñas no coinciden, vuelva a intentarlo...")       
+                break
+            else:
+                print("Las contraseñas no coinciden, vuelva a intentarlo...")       
 
         # Encrypt the password using bcrypt object before saving it in the database
         pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
