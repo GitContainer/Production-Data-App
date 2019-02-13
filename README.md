@@ -11,15 +11,29 @@
     $ sudo touch /etc/nginx/sites-available/flask_settings
     $ sudo ln -s /etc/nginx/sites-available/flask_settings /etc/nginx/sites-enabled/flask_settings
     $ vi /etc/nginx/sites-enabled/flask_settings
-
         server {
-                location / {
-                    proxy_pass http://127.0.0.1:8000;
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr; 
-                }
+        listen 80;
+        server_name 192.168.8.139;
+
+        location /static {
+                alias /home/ubntuadmin/applications/Production-Data-App/production_data_app/static;
         }
-    
+
+        location / {
+                proxy_pass http://localhost:8000;
+                include /etc/nginx/proxy_params;
+                proxy_redirect off;
+        }
+
+        location /socket.io {
+        include proxy_params;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_pass http://127.0.0.1:8000/socket.io;
+        }
+}
     $ sudo /etc/init.d/nginx restart
 3. Install and configure postgresql
 4. Install pip:
@@ -41,12 +55,12 @@
 11. Modify __init__.py line: app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql                  +psycopg2://postgres:username@host/production_data'
 12. Modify /data_acquisition/create.py paths
 13. Create data base tables:
-    $ cd /data_acquisition/
+    $ cd /data_base/
     $ python create.py
 14. Create users for login:
     $ python userRegister.py
 15. Run the application for testing:
-    $ gunicorn --worker-class eventlet -w 3 run:app
+    $ gunicorn --worker-class eventlet -w 1 run:app
 16. Install and configure supervisor:
     $ sudo apt install supervisor
     $ sudo nano /etc/supervisor/conf.d/production_data_app.conf
