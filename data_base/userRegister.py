@@ -35,16 +35,16 @@ if __name__ == "__main__":
                 break
             else:
                 print("Ingrese un correo válido")
-	    while True:
+        while True:
             password = input("Ingrese el password: ")
             while not password.isalnum():
             	print("Ingrese un password válido ese")
             	password = input("Ingrese el password: ")
-	        password2 = input("Repita la contraseña: ")
-	        if password == password2:
+            password2 = input("Repita la contraseña: ")
+            if password == password2:
 		        break
 	        else:
-		        print("Las contraseñas no coinciden, vuelva a intentarlo...")
+		        print("Las contraseñas no coinciden, vuelva a intentarlo...")       
 
         # Encrypt the password using bcrypt object before saving it in the database
         pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
