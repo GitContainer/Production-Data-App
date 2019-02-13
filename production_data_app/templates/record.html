@@ -40,6 +40,7 @@
     socket.emit('get annual production');
   });
   socket.on('annual production', function(new_data) {
+    socket.close();
     var table = document.getElementById("myTable");
     var json = JSON.parse(new_data);
     for(var k in json) {

@@ -27,22 +27,21 @@ if __name__ == "__main__":
         # Receive input data from the user in the console
         name = input("Ingresa un nombre: ")
         while not name.replace(" ", "").isalpha():
-            print("Ingrese un nombre válido")
+            print("Ingrese un nombre valido")
             name = input("Ingresa un nombre: ")
         while True:
             email = input("Ingresa un correo: ")
             if email.replace("@","").replace(".","").isalnum() and "@" in email:
                 break
             else:
-                print("Ingrese un correo válido")
+                print("Ingrese un correo valido")
 	while True:
             password = input("Ingrese el password: ")
             while not password.isalnum():
-            	print("Ingrese un password válido ese")
+            	print("Ingrese un password valido ese")
             	password = input("Ingrese el password: ")
-	    password2 = input("Repita la contraseña: ")
+	    password2 = input("Repita el password:")
 	    if password == password2:
-		print("Éxito")
 		break
 	    else:
 		print("Las contraseñas no coinciden, vuelva a intentarlo...")

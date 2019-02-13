@@ -239,7 +239,7 @@
         socket.on('new_data', function (new_data) {
             var json = JSON.parse(new_data);
             start_time = json['Jager']['start_time'];
-            var last_stop = json['JAGER']['last_stop'];
+            var last_stop = json['Jager']['last_stop'];
             var stop_time = json['Jager']['stop_time'];
             var stops = json['Jager']['stops'];
             var array = [json['Jager']['hour0'], json['Jager']['hour1'], json['Jager']['hour2'], json['Jager']['hour3'], json['Jager']['hour4'], json['Jager']['hour5'], json['Jager']['hour6'], json['Jager']['hour7'], json['Jager']['hour8'], json['Jager']['hour9']];
