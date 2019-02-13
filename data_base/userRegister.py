@@ -35,31 +35,35 @@ if __name__ == "__main__":
                 break
             else:
                 print("Ingrese un correo válido")
-	while True:
+	    while True:
             password = input("Ingrese el password: ")
             while not password.isalnum():
             	print("Ingrese un password válido ese")
             	password = input("Ingrese el password: ")
-	    password2 = input("Repita la contraseña: ")
-	    if password == password2:
-		print("Éxito")
-		break
-	    else:
-		print("Las contraseñas no coinciden, vuelva a intentarlo...")
+	        password2 = input("Repita la contraseña: ")
+	        if password == password2:
+		        break
+	        else:
+		        print("Las contraseñas no coinciden, vuelva a intentarlo...")
 
         # Encrypt the password using bcrypt object before saving it in the database
         pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+            
+        try:
+            # Query and values to execute
+            query = """INSERT INTO users 
+                        (name, email, password)
+                        VALUES (%s, %s, %s)"""
+            values = (name, email, pw_hash)
+            cur.execute(query, values)
 
-        # Query and values to execute
-        query = """INSERT INTO users 
-                    (name, email, password)
-                    VALUES (%s, %s, %s)"""
-        values = (name, email, pw_hash)
-        cur.execute(query, values)
+            # Save changes in the data base
+            conn.commit()
 
-        # Save changes in the data base
-        conn.commit()
-
-        # Closes the connection to the data base
-        cur.close()
-        conn.close()
+            # Closes the connection to the data base
+            cur.close()
+            conn.close()
+        except:
+            print("Usuario ya registrado")
+        else:
+            print("Éxito")
