@@ -2,10 +2,12 @@ import snap7.client as c
 from snap7.util import *
 from snap7.snap7types import *
 from time import sleep, strftime, gmtime, time
-from datetime import date
+from datetime import date, datetime, time, timedelta
 import time as dt
 import datetime
 import psycopg2
+import locale
+locale.setlocale(locale.LC_TIME, '')
 
 
 def ReadMemory(plc, byte, bit, datatype):
@@ -413,14 +415,17 @@ def storeData(cur, shift, stoptimes, stops, hits, machines_status, start_times):
         machine_status: auxiliar boolean dictionary of each machine's "has started working"
         start_times: dictionary with each machine's start times.
     """
-    date = dt.strftime("%A %d/%m/%Y")
+    if shift == 3:
+        date1 = (date.today() - timedelta(days=1)).strftime("%A %d/%m/%Y")
+    else:
+        date1 = dt.strftime("%A %d/%m/%Y")
     for key in machines_status.keys():
         if machines_status[key] is True:
             query = """INSERT INTO production 
                         (date, shift, machine, start_hour, stop_time, stops, hits)
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
             machine = getMachine(key)
-            values = (date, shift, machine,
+            values = (date1, shift, machine,
                       start_times[key], stoptimes[key], stops[key], hits[key])
             cur.execute(query, values)
 
