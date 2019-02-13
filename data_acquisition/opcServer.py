@@ -2,7 +2,7 @@ import snap7.client as c
 from snap7.util import *
 from snap7.snap7types import *
 from time import sleep, strftime, gmtime, time
-from datetime import date, datetime, time, timedelta
+from datetime import date, time, timedelta
 import time as dt
 import datetime
 import psycopg2
