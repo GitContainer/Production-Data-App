@@ -3,13 +3,13 @@ import sys
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-sys.path.append('/mnt/c/Users/automatizacion/Desktop/Git Projects/Production-Data-App/')
+sys.path.append('/home/ubntuadmin/applications/Production-Data-App/')
 
 from production_data_app import db, app
 from production_data_app.models import *
 
 # an Engine, which the Session will use for connection resources
-engine = create_engine('postgresql+psycopg2://postgres:Autom2018@localhost/production_data')
+engine = create_engine('postgresql+psycopg2://postgres:4RM453LDB@localhost/production_data')
 
 # create a configured "Session" class
 Session = sessionmaker(bind=engine)
@@ -19,7 +19,7 @@ session = Session()
 
 def productsUpload():
     """ Takes the products data from a csv file and uploads it to the db """
-    path = '/mnt/c/Users/automatizacion/Desktop/Git Projects/Production-Data-App/data_base/products.csv'
+    path = '/home/ubntuadmin/applications/Production-Data-App/data_base/products.csv'
     f = open(path)
     reader = csv.reader(f)
     next(reader)
@@ -29,7 +29,7 @@ def productsUpload():
 
 def machinesUpload():
     """ Takes the id and name of each machine from a csv file and uploads it to the db so the app can work """    
-    path = '/mnt/c/Users/automatizacion/Desktop/Git Projects/Production-Data-App/data_base/machines.csv'
+    path = '/home/ubntuadmin/applications/Production-Data-App/data_base/machines.csv'
     f = open(path)
     reader = csv.reader(f)
     next(reader)

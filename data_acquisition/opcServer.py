@@ -646,7 +646,7 @@ if __name__ == "__main__":
                     print("Time to work!, connecting to db")
                     # Connect to data base
                     conn, cur = connectSQL(
-                        "postgres", "Autom2018", "localhost", "production_data")
+                        "postgres", "4RM453LDB", "localhost", "production_data")
                     if conn:
                         print("Connected to db")
                         # Initialize dictionaries
