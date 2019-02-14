@@ -74,9 +74,21 @@
         killasgroup=true
         stderr_logfile=/var/log/production_data_app/production_data_app.err.log
         stdout_logfile=/var/log/production_data_app/production_data_app.out.log
+        [program:opcServer]
+        directory=/home/ubuntuadmin/applications/Production-Data-App/
+        command=/home/ubuntuadmin/applications/Production-Data-App/venv/bin/python data_acquisition/opcServer.py
+        user=ubntuadmin
+        autostart=true
+        autorestart=true
+        stopasgroup=true
+        killasgroup=true
+        stderr_logfile=/var/log/production_data_app/opcServer.err.log
+        stdout_logfile=/var/log/production_data_app/opcServer.out.log
 17. Create log files (main folder):
     $ sudo mkdir -p /var/log/production_data_app
     $ sudo touch /var/log/production_data_app/production_data_app.err.log
     $ sudo touch /var/log/production_data_app/production_data_app.out.log
+    $ sudo touch /var/log/production_data_app/opcServer.err.log
+    $ sudo touch /var/log/production_data_app/opcServer.out.log
 18. Run server:
     $ sudo supervisorctl reload
