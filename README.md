@@ -63,32 +63,34 @@
     $ gunicorn --worker-class eventlet -w 1 run:app
 16. Install and configure supervisor:
     $ sudo apt install supervisor
-    $ sudo nano /etc/supervisor/conf.d/production_data_app.conf
-        [program:production_data_app]
+    $ sudo nano /etc/supervisor/conf.d/applications.conf
+        [program:flaskWebServer]
         directory=/home/ubuntuadmin/applications/Production-Data-App
-        command=/home/ubuntuadmin/applications/Production-Data-App/venv/bin/gunicorn --worker-class eventlet -w 3 run:app
+        command=/home/ubuntuadmin/applications/Production-Data-App/venv/bin/gunicorn --worker-class eventlet -w 1 run:app
         user=ubntuadmin
         autostart=true
         autorestart=true
         stopasgroup=true
         killasgroup=true
-        stderr_logfile=/var/log/production_data_app/production_data_app.err.log
-        stdout_logfile=/var/log/production_data_app/production_data_app.out.log
+        stderr_logfile=/var/log/applications/production_data_app.err.log
+        stdout_logfile=/var/log/applications/production_data_app.out.log
         [program:opcServer]
         directory=/home/ubuntuadmin/applications/Production-Data-App/
-        command=/home/ubuntuadmin/applications/Production-Data-App/venv/bin/python data_acquisition/opcServer.py
+        command=/home/ubuntuadmin/venv/bin/python data_acquisition/opcServer.py
         user=ubntuadmin
         autostart=true
         autorestart=true
         stopasgroup=true
         killasgroup=true
-        stderr_logfile=/var/log/production_data_app/opcServer.err.log
-        stdout_logfile=/var/log/production_data_app/opcServer.out.log
+        stderr_logfile=/var/log/applications/opcServer.err.log
+        stdout_logfile=/var/log/applications/opcServer.out.log
 17. Create log files (main folder):
     $ sudo mkdir -p /var/log/production_data_app
-    $ sudo touch /var/log/production_data_app/production_data_app.err.log
-    $ sudo touch /var/log/production_data_app/production_data_app.out.log
-    $ sudo touch /var/log/production_data_app/opcServer.err.log
-    $ sudo touch /var/log/production_data_app/opcServer.out.log
+    $ sudo touch /var/log/applications/production_data_app.err.log
+    $ sudo touch /var/log/applications/production_data_app.out.log
+    $ sudo touch /var/log/applications/opcServer.err.log
+    $ sudo touch /var/log/applications/opcServer.out.log
 18. Run server:
     $ sudo supervisorctl reload
+19. Verify:
+    $ sudo service supervisor status
