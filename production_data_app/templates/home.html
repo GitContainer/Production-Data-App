@@ -39,7 +39,8 @@
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Datos</div>
                 <ul class="sidebar-menu list-unstyled">
                     <li class="sidebar-list-item"><a href="{{ url_for('home')}}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Tabla general</span></a></li>
-                    <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#machines" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Máquinas</span></a>
+                    <li class="sidebar-list-item"><a href="#" data-toggle="collapse" data-target="#machines" aria-expanded="false" aria-controls="pages" class="sidebar-link text-muted">
+                      <img src="{{ url_for('static', filename='images/robot.svg') }}" height="30" width="30"><span style="margin-left:10px">Máquinas</span></a>
                       <div id="machines" class="collapse">
                         <ul class="sidebar-menu list-unstyled border-left border-primary border-thick">
                           <li class="sidebar-list-item"><a href="{{ url_for('MG320')}}" class="sidebar-link text-muted pl-lg-5">MG320</a></li>
@@ -53,10 +54,12 @@
                           <li class="sidebar-list-item"><a href="{{ url_for('Schlatter_7')}}" class="sidebar-link text-muted pl-lg-5">Schlatter 7</a></li>
                         </ul>
                       </div>
+                    
                     </li>
-                    <li class="sidebar-list-item"><a href="{{ url_for('record')}}" class="sidebar-link text-muted"><i class="o-table-content-1 mr-3 text-gray"></i><span>Récord histórico</span></a></li>                    
-              <!-- </ul>
-              <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Altas</div>
+                    <li class="sidebar-list-item"><a href="{{ url_for('prodperhour')}}" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Producción por hora</span></a></li>
+                    <li class="sidebar-list-item"><a href="{{ url_for('record')}}" class="sidebar-link text-muted"><i class="o-database-1 mr-3 text-gray"></i><span>Récord histórico</span></a></li>                    
+                </ul>
+              <!-- <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Altas</div>
               <ul class="sidebar-menu list-unstyled">
                     <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Alta operador</span></a></li>
                     <li class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paperwork-1 mr-3 text-gray"></i><span>Alta producto</span></a></li>

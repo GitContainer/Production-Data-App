@@ -1,3 +1,16 @@
+*Updates*
+
+#  V1.1:
+    - Chagend machines and record icon
+    - Changed the order of the production record so the first rows of the table corresponds to the closest date
+    - Added new section: Production per hour, which shows every pph graph and a total pph graph
+    - Repaired PLC so in case of power failure the data remains as it was
+    - Added production line graph for every machine, restyled information and added work efficiency
+
+
+
+
+
 ## Instructions
 
 1. Install snap7 library and nginx:

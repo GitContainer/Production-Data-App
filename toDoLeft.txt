@@ -2,5 +2,4 @@ filter dropdown list for annual production
 
 
 mail
-total golpes gráficas
 to excel button

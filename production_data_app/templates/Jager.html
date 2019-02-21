@@ -35,6 +35,18 @@
                     margin-bottom: 0px;"><b>0</b></label>
                 </div>
             </div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Hora de inicio</h2>
+                </div>
+                <div class="card-body" style="text-align:center;">
+                    <label id="start_time" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-4">
             <div class="card mb-3" style="height: 150px;">
                 <div class="card-header">
                     <h2 class="h6 text-uppercase mb-0">Últimpo paro</h2>
@@ -42,18 +54,6 @@
                 <div class="card-body" style="text-align: center;">
                     <label id="last_stop" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;">Sin paros
                         registrados hasta el momento</label>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-4">
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h2 class="h6 text-uppercase mb-0">Hora de inicio</h2>
-                </div>
-                <div class="card-body" style="text-align:center;">
-                    <label id="start_time" style="font-size: 15px; margin-top: -12px; margin-bottom: 0px;"></label>
                 </div>
             </div>
             <div class="card mb-4">
@@ -231,7 +231,6 @@
         });
         function update() {
             socket.emit('getData');
-            socket.emit('getVelocities');
         }
         function updateVel() {
             socket.emit('getVelocities');

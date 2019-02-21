@@ -1,0 +1,392 @@
+{% extends "home.html" %}
+
+{% block body %}
+<section class="py-5">
+    <div class="row mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="h6 text-uppercase mb-0" style="text-align:center;">Producción total por hora</h3>
+                <label id="label">Total: </label>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height: 400px; width: 1000px;">
+                    <canvas id="PPH"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHMG320"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHPG12"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHJager"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHSchlatter1"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHSchlatter4"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHSchlatter5"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHSchlatter6"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 330px; width: 450px;">
+                            <canvas id="PPHSchlatter7"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chartjs-plugin-annotation.js') }}"></script>
+<script>
+    var labels;
+    window.onload = function () {
+        // Checks the hour of the server so it can display the correct labels in the graph
+        var date = new Date();
+        var utcDate = new Date(date.toUTCString());
+        hour = utcDate.getHours();
+        minute = utcDate.getMinutes();
+        week_day = utcDate.getDay();
+        if (7 <= hour && hour <= 17) {
+            if (week_day == 6) {
+                labels = ["7:30 - 8:30", "8:30 - 9:30", "9:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30", "12:30 - 13:30"];
+            }
+            else {
+                if ((hour == 7 && minute < 30) || (hour == 17 && minute > 30)) {
+                    labels = ["21:30 - 22:30", "22:30 - 23:30", "23:30 - 00:30", "00:30 - 1:30", "1:30 - 2:30", "2:30 - 3:30", "3:30 - 4:30", "4:30 - 5:30", "5:30 - 6:30", "6:30 - 7:30"];
+                }
+                else {
+                    labels = ["7:30 - 8:30", "8:30 - 9:30", "9:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30", "12:30 - 13:30", "13:30 - 14:30", "14:30 - 15:30", "15:30 - 16:30", "16:30 - 17:30"];
+                }
+            }
+        }
+        else {
+            var labels = ["21:30 - 22:30", "22:30 - 23:30", "23:30 - 00:30", "00:30 - 1:30", "1:30 - 2:30", "2:30 - 3:30", "3:30 - 4:30", "4:30 - 5:30", "5:30 - 6:30", "6:30 - 7:30"];
+        }
+        var pphTotal = document.getElementById("PPH");
+        var pphMG320 = document.getElementById("PPHMG320");
+        var pphPG12 = document.getElementById("PPHPG12");
+        var pphJager = document.getElementById("PPHJager");
+        var pphSchlatter1 = document.getElementById("PPHSchlatter1");
+        var pphSchlatter4 = document.getElementById("PPHSchlatter4");
+        var pphSchlatter5 = document.getElementById("PPHSchlatter5");
+        var pphSchlatter7 = document.getElementById("PPHSchlatter7");
+        var chartOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                legend: {
+                    display: true,
+                    labels: {
+                        boxWidth: 10
+                    }
+                },
+                scales: {
+                    yAxes: [{  
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        stacked: true
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            fontSize: 13
+                        }, 
+                        stacked: true
+                    }]
+                },
+                annotation: {
+                    annotations: [{
+                        type: 'line',
+                        mode: 'horizontal',
+                        scaleID: 'y-axis-0',
+                        value: 2000,
+                        borderColor: 'tomato',
+                        borderWidth: 2
+                    }],
+                    drawTime: "afterDraw", 
+                    label: {
+                        enabled: false,
+                        content: 'Producción meta'
+                    }
+                },
+            };
+        // Creation of production per hour graph
+        barChart = new Chart(pphTotal, {
+            type: 'bar',
+            data: getDataSet('Total', labels),
+            options: chartOptions
+        });
+        mg320Chart = new Chart(pphMG320, {
+            type: 'bar',
+            data: getDataSet('MG320', labels),
+            options: chartOptions
+        });
+        pg12Chart = new Chart(pphPG12, {
+            type: 'bar',
+            data: getDataSet('PG12', labels),
+            options: chartOptions
+        });
+        jagerChart = new Chart(pphJager, {
+            type: 'bar',
+            data: getDataSet('Jager', labels),
+            options: chartOptions
+        });
+        schl1Chart = new Chart(pphSchlatter1, {
+            type: 'bar',
+            data: getDataSet('Schlatter 1', labels),
+            options: chartOptions
+        });
+        schl4Chart = new Chart(pphSchlatter4, {
+            type: 'bar',
+            data: getDataSet('Schlatter 4', labels),
+            options: chartOptions
+        });
+        schl5Chart = new Chart(pphSchlatter5, {
+            type: 'bar',
+            data: getDataSet('Schlatter 5', labels),
+            options: chartOptions
+        });
+        schl7Chart = new Chart(pphSchlatter7, {
+            type: 'bar',
+            data: getDataSet('Schlatter 7', labels),
+            options: chartOptions
+        });
+        // Configure font size for small graphs
+        mg320Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        pg12Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        jagerChart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        schl1Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        schl4Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        schl5Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        schl7Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        mg320Chart.update();
+        pg12Chart.update();
+        jagerChart.update();
+        schl1Chart.update();
+        schl4Chart.update();
+        schl5Chart.update();
+        schl7Chart.update();
+        // Declaration of a web socket for requesting data evre x seconds
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        // Request data from the server every 1.5 seconds and 3 seconds, using web socket io
+        socket.on('connect', function () {
+            setInterval(update, 1500);
+        });
+        function update() {
+            socket.emit('getData');
+        }
+        // Whenever receives the data from the server, updates the page content
+        socket.on('new_data', function (new_data) {
+            var json = JSON.parse(new_data);
+            var arrayMG320 = [json['MG320']['hour0'], json['MG320']['hour1'], json['MG320']['hour2'], json['MG320']['hour3'], json['MG320']['hour4'], json['MG320']['hour5'], json['MG320']['hour6'], json['MG320']['hour7'], json['MG320']['hour8'], json['MG320']['hour9']];
+            var arrayPG12 = [json['PG12']['hour0'], json['PG12']['hour1'], json['PG12']['hour2'], json['PG12']['hour3'], json['PG12']['hour4'], json['PG12']['hour5'], json['PG12']['hour6'], json['PG12']['hour7'], json['PG12']['hour8'], json['PG12']['hour9']];
+            var arrayJager = [json['Jager']['hour0'], json['Jager']['hour1'], json['Jager']['hour2'], json['Jager']['hour3'], json['Jager']['hour4'], json['Jager']['hour5'], json['Jager']['hour6'], json['Jager']['hour7'], json['Jager']['hour8'], json['Jager']['hour9']];
+            var arraySchl1 = [json['Schlatter1']['hour0'], json['Schlatter1']['hour1'], json['Schlatter1']['hour2'], json['Schlatter1']['hour3'], json['Schlatter1']['hour4'], json['Schlatter1']['hour5'], json['Schlatter1']['hour6'], json['Schlatter1']['hour7'], json['Schlatter1']['hour8'], json['Schlatter1']['hour9']];
+            var arraySchl4 = [json['Schlatter4']['hour0'], json['Schlatter4']['hour1'], json['Schlatter4']['hour2'], json['Schlatter4']['hour3'], json['Schlatter4']['hour4'], json['Schlatter4']['hour5'], json['Schlatter4']['hour6'], json['Schlatter4']['hour7'], json['Schlatter4']['hour8'], json['Schlatter4']['hour9']];
+            var arraySchl5 = [json['Schlatter5']['hour0'], json['Schlatter5']['hour1'], json['Schlatter5']['hour2'], json['Schlatter5']['hour3'], json['Schlatter5']['hour4'], json['Schlatter5']['hour5'], json['Schlatter5']['hour6'], json['Schlatter5']['hour7'], json['Schlatter5']['hour8'], json['Schlatter5']['hour9']];
+            var arraySchl7 = [json['Schlatter7']['hour0'], json['Schlatter7']['hour1'], json['Schlatter7']['hour2'], json['Schlatter7']['hour3'], json['Schlatter7']['hour4'], json['Schlatter7']['hour5'], json['Schlatter7']['hour6'], json['Schlatter7']['hour7'], json['Schlatter7']['hour8'], json['Schlatter7']['hour9']];
+            
+            dataMG320 = getDifference(arrayMG320);
+            dataPG12 = getDifference(arrayPG12);
+            dataJager = getDifference(arrayJager);
+            dataSchl1 = getDifference(arraySchl1);
+            dataSchl4 = getDifference(arraySchl4);
+            dataSchl5 = getDifference(arraySchl5);
+            dataSchl7 = getDifference(arraySchl7);
+            var sum = 0;
+            for(var i = 0; i < dataMG320.length; i++){
+                sum += dataMG320[i] + dataPG12[i] + dataJager[i] + dataSchl1[i] + dataSchl4[i] + dataSchl5[i] + dataSchl7[i];
+            }
+            document.querySelector("#label").innerHTML = "Total: " + String(sum) + " estribos";
+            mg320Chart.data.datasets[0].data = dataMG320;
+            pg12Chart.data.datasets[0].data = dataPG12;
+            jagerChart.data.datasets[0].data = dataJager;
+            schl1Chart.data.datasets[0].data = dataSchl1;
+            schl4Chart.data.datasets[0].data = dataSchl4;
+            schl5Chart.data.datasets[0].data = dataSchl5;
+            schl7Chart.data.datasets[0].data = dataSchl7;
+            barChart.data.datasets[0].data = dataMG320;
+            barChart.data.datasets[1].data = dataPG12;
+            barChart.data.datasets[2].data = dataJager;
+            barChart.data.datasets[3].data = dataSchl1;
+            barChart.data.datasets[4].data = dataSchl4;
+            barChart.data.datasets[5].data = dataSchl5;
+            barChart.data.datasets[6].data = dataSchl7;
+            barChart.update();
+            mg320Chart.update();
+            pg12Chart.update();
+            jagerChart.update();
+            schl1Chart.update();
+            schl4Chart.update();
+            schl5Chart.update();
+            schl7Chart.update();
+        });
+    }
+    // Function that receives total amount of production and gets the production per hour
+    function getDifference(array) {
+        var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        for (i = 0; i < array.length; i++) {
+            if (i == 0) {
+                data[i] = array[i];
+            }
+            else if (array[i] != 0) {
+                data[i] = array[i] - array[i - 1];
+            }
+        }
+        return data;
+    }
+    // Dataset generator
+    function getDataSet(machine, xlabels){
+        var color;
+        var bcolor;
+        switch(machine) {
+            case 'MG320':
+                color = 'rgba(255, 0, 0, 0.5)';
+                bcolor = 'rgba(255, 0, 0, 1)';
+                break;
+            case 'PG12':
+                color = 'rgba(54, 162, 235, 0.5)';
+                bcolor = 'rgba(54, 162, 235, 1)';
+                break;
+            case 'Jager':
+                color = 'rgba(0, 200, 0, 0.5)';
+                bcolor = 'rgba(0, 200, 0, 1)';
+                break;
+            case 'Schlatter 1':
+                color = 'rgba(125, 0, 125, 0.5)';
+                bcolor = 'rgba(125, 0, 125, 1)';
+                break;
+            case 'Schlatter 4':
+                color = 'rgba(125, 125, 0, 0.5)';
+                bcolor = 'rgba(125, 125, 0, 1)';
+                break;
+            case 'Schlatter 5':
+                color = 'rgba(255, 125, 0, 0.5)';
+                bcolor = 'rgba(255, 125, 0, 1)';
+                break;
+            case 'Schlatter 7':
+                color = 'rgba(255, 0, 128, 0.5)';
+                bcolor = 'rgba(255, 0, 128, 1)';
+                break;
+            case 'Total':
+                var indata = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                var Data = {
+                    labels: xlabels,
+                    datasets: [{
+                            type: 'bar',
+                            label: 'MG320',
+                            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                            data: indata
+                        },{
+                            type: 'bar',
+                            label: 'PG12',
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            data: indata
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Jager',
+                            backgroundColor: 'rgba(0, 200, 0, 0.5)',
+                            data: indata
+                        }, {
+                            type: 'bar',
+                            label: 'Schlatter 1',
+                            backgroundColor: 'rgba(125, 0, 125, 0.5)',
+                            data: indata
+                        }, {
+                            type: 'bar',
+                            label: 'Schlatter 4',
+                            backgroundColor: 'rgba(125, 125, 0, 0.5)',
+                            data: indata
+                        }, {
+                            type: 'bar',
+                            label: 'Schlatter 5',
+                            backgroundColor: 'rgba(255, 125, 0, 0.5)',
+                            data: indata
+                        }, {
+                            type: 'bar',
+                            label: 'Schlatter 7',
+                            backgroundColor: 'rgba(255, 0, 128, 0.5)',
+                            data: indata
+                        }]
+                };
+                return Data;        
+        }      
+        var slabel = 'Estribos ' + machine;      
+        var dataset = {
+            label:  slabel,
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: color,
+            borderColor: bcolor,
+            borderWidth: 1
+        };
+        var Data = {
+            labels: xlabels,
+            datasets: [dataset]
+        };
+        return Data;
+    }
+</script>
+{% endblock %}

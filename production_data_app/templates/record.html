@@ -44,7 +44,7 @@
     var table = document.getElementById("myTable");
     var json = JSON.parse(new_data);
     for(var k in json) {
-      var row = table.insertRow(-1);
+      var row = table.insertRow(1);
       var cell;
       cell = row.insertCell(-1);
       cell.innerHTML = json[k]["date"];

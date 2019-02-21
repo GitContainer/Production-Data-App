@@ -127,3 +127,6 @@ insert into machines
 --ALTER TABLE machines ALTER COLUMN hour9 set DEFAULT 0
 -- ALTER TABLE machines
 --     ADD COLUMN last_stop TIME
+
+-- ALTER TABLE machines
+--     ADD COLUMN goal INTEGER NOT NULL DEFAULT 0

@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Configuration of the flask application
 app.debug = False
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:4RM453LDB@localhost/production_data'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:Autom2018@localhost/production_data'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_POOL_SIZE"] = 150
 app.config["SQLALCHEMY_MAX_OVERFLOW"] = 150
