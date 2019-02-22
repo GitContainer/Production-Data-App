@@ -1,6 +1,7 @@
 {% extends "home.html" %}
 
 {% block body %}
+
 <section class="py-5">
     <div class="row">
         <div class="col-xl-3 col-lg-6 mb-4 mb-xl-0">
@@ -58,7 +59,7 @@
                 </div>
                 <div class="card-body">
                     <div class="chart-holder mt-5 mb-5">
-                        <canvas id="Production" style="height: 370px; width: 100%;"></canvas>
+                        <canvas id="Production" style="height: 370px; width: 100%; margin-top: -50px;"></canvas>
                     </div>
                 </div>
             </div>
@@ -93,15 +94,34 @@
             </div>
         </div>
     </div>
-        <div class="card" style="height: 460px">
-            <div class="card-header">
-                <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad</h2>
-            </div>
-            <div class="card-body">
-                <label class="mb-5 text-gray">Se muestran los datos de velocidad de los últimos 8 minutos</label>
-                <canvas id="Velocities" style="height: 355px; width: 100%;  position:absolute; top:27%;"></canvas>
+    <div class="row">
+        <div class="col-lg-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad [GPM]</h2>
+                    <div style="float: right; margin-top: -25px; margin-right: 10px">
+                        <button type="button" onclick="play()" class="playButton">
+                            <img src="{{ url_for('static', filename='images/play.svg') }}" height="25" width="25" style="margin-left:5px;">
+                        </button>
+                        <button type="button" onclick="stop()" class="stopButton">
+                            <img src="{{ url_for('static', filename='images/stopB.svg') }}" height="25" width="25">
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de las últimas X horas</label>
+                    <div class="chartWrapper">
+                        <div class="chartAreaWrapper">
+                            <div class="chartAreaWrapper2">
+                                <canvas id="velocities"></canvas>
+                            </div>
+                        </div>
+                        <canvas id="velocitiesAxis" height="300" width="0"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 </section>
 {% endblock %}
 {% block script %}
@@ -114,8 +134,10 @@
     var lineValue = 0;
     var StopState;
     var labels;
-
+    var playState = true;
+    var k;
     window.onload = function () {
+        k = true;
         // Gets or sets variable on local storage for production per hour goal
         try {
             if ('lineValueMG320' in localStorage) {
@@ -155,9 +177,8 @@
         }
         var hits = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         var velocities = [0];
-        var timeline = [0];
+        var timeline = [""];
         var c1 = document.getElementById("Production").getContext('2d');
-        var c2 = document.getElementById("Velocities").getContext('2d');
         // Production per hour graph
         chartProduction = new Chart(c1, {
             type: 'line',
@@ -219,35 +240,40 @@
             }
         });
         // Realtime velocity graph
-        chartVel = new Chart(c2, {
+        var ctx = document.getElementById("velocities").getContext("2d");
+        var chart = {
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
+                animation: {
+
+                    onComplete: function (animation) {
+                        var sourceCanvas = velLiveChart.chart.canvas;
+                        var copyWidth = velLiveChart.scales['y-axis-0'].width - 10;
+                        var copyHeight = velLiveChart.scales['y-axis-0'].height + velLiveChart.scales['y-axis-0'].top + 10;
+                        var targetCtx = document.getElementById("velocitiesAxis").getContext("2d");
+                        targetCtx.canvas.width = copyWidth;
+                        targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
+                    }
+                },
+                elements: { point: { radius: .5 } }
+            },
             type: 'line',
             data: {
                 labels: timeline,
-                datasets: [{
-                    label: 'Golpes por minuto',
-                    data: velocities,
-                    backgroundColor: 'rgba(144, 238, 144, 0.4)'
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        stacked: true,
-                        ticks: {
-                            beginAtZero: true,
-                            max: 120
-                        }
-                    }],
-                    xAxes: [{
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10
-                        }
-                    }]
-                },
-                elements: { point: { radius: .5 } }
+                datasets: [
+                    {
+                        label: "Golpes por minuto",
+                        backgroundColor: 'rgba(144, 238, 144, 0.4)',
+                        data: velocities
+                    }
+                ]
             }
-        });
+        };
+        var velLiveChart = new Chart(ctx, chart);
         var start_time = "None";
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         // Request data from the server every 1.5 seconds and 3 seconds, using web socket io
@@ -272,7 +298,7 @@
             var stop_hours = parseInt(stop_time.slice(0, 2));
             var stop_minutes = parseInt(stop_time.slice(3, 5));
             var stop_seconds = parseInt(stop_time.slice(6, 8));
-            var shours = (stop_hours*3600 + stop_minutes*60 + stop_seconds)/3600;
+            var shours = (stop_hours * 3600 + stop_minutes * 60 + stop_seconds) / 3600;
             chartProduction.data.datasets[0].data = [0].concat(production);
             chartProduction.update();
             if (Number.isInteger(stops)) {
@@ -289,18 +315,18 @@
                 hour = utcDate.getHours();
                 minute = utcDate.getMinutes();
                 second = utcDate.getSeconds();
-                if (day){
-                    var thours = (hour*3600 + minute*60 + second - 27000)/3600;
+                if (day) {
+                    var thours = (hour * 3600 + minute * 60 + second - 27000) / 3600;
                 }
-                else{
-                    var thours = (hour*3600 + minute*60 + second - 77400)/3600;
+                else {
+                    var thours = (hour * 3600 + minute * 60 + second - 77400) / 3600;
                 }
                 var ahours = thours - shours;
                 document.querySelector("#active_hours").innerHTML = (ahours).toFixed(2);
                 chartEfficiency.data.datasets[0].data[0] = ahours.toFixed(2);
                 chartEfficiency.data.datasets[0].data[1] = shours.toFixed(2);
                 chartEfficiency.update();
-                document.querySelector("#eff").innerHTML = "Eficiencia de trabajo: " + String((ahours/thours).toFixed(2)*100) + "%";
+                document.querySelector("#eff").innerHTML = "Eficiencia de trabajo: " + String(parseInt((ahours / thours) * 100)) + "%";
             }
             if (stop_time == "None") {
                 document.querySelector("#stop_time").innerHTML = "00:00:00";
@@ -323,15 +349,51 @@
                     timeline.push(json_vel[String(i)]["timestamp"]);
                     velocities.push(json_vel[String(i)]["mg320"]);
                 }
-                if (velocities.length > 150) {
-                    timeline = timeline.slice(-150);
-                    velocities = velocities.slice(-150);
+                var n_1 = velLiveChart.data.datasets[0].data.length;
+                console.log(n_1)
+                if (n_1 >= 3070) {
+                    velocities = velLiveChart.data.datasets[0].data;
+                    timeline = velLiveChart.data.labels;
+                    velLiveChart.data.datasets[0].data.push(Math.random() * 120);
+                    velLiveChart.data.labels.push("Test");
+                    timeline = timeline.slice(-3070);
+                    velocities = velocities.slice(-3070);
+                    velLiveChart.data.datasets[0].data = velocities;
+                    velLiveChart.data.labels = timeline;
+                    var newwidth = 16330;
+                    $('.chartAreaWrapper2').width(newwidth);
+                    if (playState) {
+                            $('.chartAreaWrapper').animate({ scrollLeft: newwidth });
+                        }
+                    velLiveChart.update();
                 }
-                chartVel.data.labels = timeline;
-                chartVel.data.datasets[0].data = velocities;
-                chartVel.update();
+                else {
+                    if (!k) {
+                        velLiveChart.data.datasets[0].data.push(Math.random() * 120);
+                        velLiveChart.data.labels.push("Test");
+                        var newwidth = $('.chartAreaWrapper2').width() + 5; //*(n-n_1)
+                        $('.chartAreaWrapper2').width(newwidth);
+                        if (playState) {
+                            $('.chartAreaWrapper').animate({ scrollLeft: newwidth });
+                        }
+                    }
+                    else {
+                        k = false;
+                        velLiveChart.data.datasets[0].data = velocities;
+                        velLiveChart.data.labels = timeline;
+                        var newwidth = $('.chartAreaWrapper2').width() + 5 * n;
+                        $('.chartAreaWrapper2').width(newwidth);
+                        $('.chartAreaWrapper').animate({ scrollLeft: newwidth });
+                    }
+                }
             }
         });
+    }
+    function play() {
+        playState = true;
+    }
+    function stop() {
+        playState = false;
     }
 </script>
 {% endblock %}

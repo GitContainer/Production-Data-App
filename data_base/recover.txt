@@ -1,0 +1,47 @@
+style="height: 355px; width: 100%;  position:absolute; top:27%;"
+
+style="position: relative; height: 400px; width: 1000px;"
+
+<div class="row">
+        <div class="col-lg-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h6 text-uppercase mb-0">Gráfica de velocidad: Últimos 15 minutos</h2>
+                </div>
+                <div class="card-body">
+                    <div class="velocityGraph">
+                        <canvas id="Velocities"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+
+// chartVel = new Chart(c2, {
+        //     type: 'line',
+        //     data: {
+        //         labels: timeline,
+        //         datasets: [{
+        //             label: 'Golpes por minuto',
+        //             data: velocities,
+        //             backgroundColor: 'rgba(144, 238, 144, 0.4)'
+        //         }]
+        //     },
+        //     options: {
+        //         scales: {
+        //             yAxes: [{
+        //                 ticks: {
+        //                     beginAtZero: true,
+        //                     max: 120
+        //                 }
+        //             }],
+        //             xAxes: [{
+        //                 ticks: {
+        //                     autoSkip: true,
+        //                     maxTicksLimit: 10
+        //                 }
+        //             }]
+        //         },
+        //         elements: { point: { radius: .5 } }
+        //     }
+        // });

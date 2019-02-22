@@ -1,0 +1,59 @@
+.chartWrapper {
+    position: relative;
+    
+}
+
+.chartWrapper > canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events:none;
+}
+.chartAreaWrapper {
+  overflow-x: scroll;
+    position: relative;
+    width: 100%;
+}
+
+.chartAreaWrapper2 {
+  
+    position: relative;
+    height: 300px;
+}
+
+.playButton {
+    margin-right:15px;
+    background-color: rgba(144, 238, 144);
+    border: none;
+    color: white;
+    padding: 12px 13px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.playButton:hover {
+    background-color: rgba(144, 238, 144, 0.5);
+}
+
+.stopButton {
+    margin-right:15px;
+    background-color: rgb(220,20,60);
+    border: none;
+    color: white;
+    padding: 12px 13px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.stopButton:hover {
+    background-color: rgb(220,20,60, 0.5);
+}
+
+.playButton:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(10px);
+}
+.stopButton:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(10px);
+}

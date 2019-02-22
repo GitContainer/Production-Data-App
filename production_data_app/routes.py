@@ -73,11 +73,12 @@ def home():
     return render_template('home.html')
 
 
-@app.route("/record", methods=['GET'])
+@app.route("/record")
 @login_required
 def record():
     """Redirects to the record page which has the history record of the production data in a table"""
-    return render_template('record.html')
+    production = Production.query.order_by(desc(Production.id)).all()
+    return render_template('record.html', production=production)
 
 @app.route("/prodperhour", methods=['GET'])
 @login_required
@@ -291,28 +292,6 @@ def refreshData():
     }
     new_data = json.dumps(new_data)
     emit('new_data', new_data, broadcast=False)
-
-@socketio.on('get annual production')
-@cached()
-def get_anual_production():
-    """Function that gets called on a socket io request that downloads all the record information
-    about the production from the data base, wrapps it into a dictionary and then it returns, whith 
-    a socket io emit, the dictionary parsed into a JSON format object"""
-    production = Production.query.all()
-    D = collections.OrderedDict()
-    for row in production:
-        d = {}
-        d["date"] = row.date
-        d["shift"] = row.shift
-        d["machine"] = row.machine
-        d["start_hour"] = str(row.start_hour)
-        d["stop_time"] = str(row.stop_time)
-        d["stops"] = row.stops
-        d["hits"] = row.hits
-        D[row.id] = d
-        del d
-    new_data = json.dumps(D)
-    emit('annual production', new_data, broadcast=False)
 
 @socketio.on('getVelocities')
 @cached()

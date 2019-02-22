@@ -24,7 +24,19 @@
                 <th>Golpes</th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+              {% for record in production %}
+                <tr>
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.shift }}</td>
+                  <td>{{ record.machine }}</td>
+                  <td>{{ record.start_hour }}</td>
+                  <td>{{ record.stop_time }}</td>
+                  <td>{{ record.stops }}</td>
+                  <td>{{ record.hits }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
           </table>
         </div>
       </div>
@@ -33,34 +45,4 @@
 </section>
 {% endblock %}
 {% block script %}
-<!-- JavaScript code that request data once the page is loaded-->
-<script type="text/javascript" charset="utf-8">
-  var socket = io.connect('http://' + document.domain + ':' + location.port);
-  socket.on('connect', function() {
-    socket.emit('get annual production');
-  });
-  socket.on('annual production', function(new_data) {
-    socket.close();
-    var table = document.getElementById("myTable");
-    var json = JSON.parse(new_data);
-    for(var k in json) {
-      var row = table.insertRow(1);
-      var cell;
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["date"];
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["shift"];
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["machine"];
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["start_hour"];
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["stop_time"];
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["stops"];
-      cell = row.insertCell(-1);
-      cell.innerHTML = json[k]["hits"];
-    }
-  });
-</script>
 {% endblock %}
