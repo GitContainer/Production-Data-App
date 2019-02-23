@@ -25,7 +25,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for record in production %}
+              {% for record in production.items %}
                 <tr>
                   <td>{{ record.date }}</td>
                   <td>{{ record.shift }}</td>
@@ -41,6 +41,35 @@
         </div>
       </div>
     </div>
+  </div>
+  <div style="width:1065px; height:50px;">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('record', page=production.prev_num) }}" aria-label="Previous" style="color:black">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {% for page_num in production.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+          {% if page_num %}
+            {% if production.page == page_num %}
+              <li class="page-item"></li><a class="page-link" href="{{ url_for('record', page=page_num) }}" style="color:black">
+                {{ page_num }}<span class="sr-only">(current)</span></a></li>
+            {% else %}
+              <li class="page-item"></li><a class="page-link" href="{{ url_for('record', page=page_num) }}" style="color:black">
+                {{ page_num }}</a>
+            {% endif %}
+          {% else %}
+            .  . . .  .
+          {% endif %}
+        {% endfor %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('record', page=production.next_num) }}" aria-label="Next" style="color:black">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </section>
 {% endblock %}

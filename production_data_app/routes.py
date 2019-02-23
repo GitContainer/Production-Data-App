@@ -4,7 +4,6 @@ import json
 from production_data_app import app, bcrypt, login_manager, socketio
 from werkzeug.contrib.cache import SimpleCache
 from flask_socketio import emit
-from sqlalchemy import desc
 from production_data_app.models import User, Production, Velocity, Machine
 import collections
 
@@ -77,7 +76,8 @@ def home():
 @login_required
 def record():
     """Redirects to the record page which has the history record of the production data in a table"""
-    production = Production.query.order_by(desc(Production.id)).all()
+    page = request.args.get('page', 1, type=int)
+    production = Production.query.order_by(Production.id.desc()).paginate(page=page, per_page=48)
     return render_template('record.html', production=production)
 
 @app.route("/prodperhour", methods=['GET'])

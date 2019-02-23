@@ -45,3 +45,5 @@ style="position: relative; height: 400px; width: 1000px;"
         //         elements: { point: { radius: .5 } }
         //     }
         // });
+
+        <!-- <a class="btn btn-info mb-4" href="{{ url_for('record', page=page_num) }}">{{ page_num }}</a> -->
