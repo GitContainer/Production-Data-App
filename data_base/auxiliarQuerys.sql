@@ -128,5 +128,14 @@ insert into machines
 -- ALTER TABLE machines
 --     ADD COLUMN last_stop TIME
 
--- ALTER TABLE machines
---     ADD COLUMN goal INTEGER NOT NULL DEFAULT 0
+-- ALTER TABLE machines ADD COLUMN goal INTEGER NOT NULL DEFAULT 0;
+
+CREATE TABLE stops_record (
+	 id serial PRIMARY KEY,
+	 date VARCHAR(30) NOT NULL,
+     start_stop TIME NOT NULL,
+	 duration TIME NOT NULL,
+     minutes_duration REAL NOT NULL,
+	 machine VARCHAR(30) NOT NULL
+);
+ALTER SEQUENCE stops_record_id_seq RESTART WITH 1;

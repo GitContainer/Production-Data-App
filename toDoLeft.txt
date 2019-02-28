@@ -1,5 +1,0 @@
-filter dropdown list for annual production
-
-
-mail
-to excel button

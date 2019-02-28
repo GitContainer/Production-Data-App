@@ -37,6 +37,7 @@ class Machine(db.Model):
     hour7 = db.Column(db.Integer, nullable=True, default=0)
     hour8 = db.Column(db.Integer, nullable=True, default=0)
     hour9 = db.Column(db.Integer, nullable=True, default=0)
+    goal = db.Column(db.Integer, nullable=True, default=0)
 
 class Production(db.Model):
     __tablename__ = "production"
@@ -54,10 +55,18 @@ class Velocity(db.Model):
     timestamp = db.Column(db.Time, primary_key=True)
     mg320 = db.Column(db.Integer, nullable = False, default=0)
     pg12 = db.Column(db.Integer, nullable = False, default=0)
-    evg = db.Column(db.Integer, nullable = False, default=0)
     jager = db.Column(db.Integer, nullable = False, default=0)
     schl1 = db.Column(db.Integer, nullable = False, default=0)
     schl4 = db.Column(db.Integer, nullable = False, default=0)
     schl5 = db.Column(db.Integer, nullable = False, default=0)
     schl6 = db.Column(db.Integer, nullable = False, default=0)
     schl7 = db.Column(db.Integer, nullable = False, default=0)
+
+class Stop_record(db.Model):
+    __tablename__ = "stops_record"
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String, nullable=False)
+    start_stop = db.Column(db.Time, nullable=False)
+    duration = db.Column(db.Time, nullable=False)
+    minutes_duration = db.Column(db.Float, nullable=False)
+    machine = db.Column(db.String, nullable=False)

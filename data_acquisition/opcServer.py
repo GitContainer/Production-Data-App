@@ -202,7 +202,7 @@ def getStopTime(plc):
     return machines_stoptime
 
 
-def getVelocities(plc, old_velocities):
+def getVelocities(plc, old_velocities, stop_data, hour):
     """ 
     Retrieves in miliseconds the time between each hit of every machine and then
     it is converted to hits per minute. Also this function tells wether a machine
@@ -246,16 +246,22 @@ def getVelocities(plc, old_velocities):
         "SCHL1": Sch1,
         "MG320": MG320,
         "5S07": PG12,
-        "EVG": 0,
         "SCHL6": 0
     }
+
     in_stop_state = []
+    restarting = []
 
     for key, value in new_velocities.items():
         if value == 0 and old_velocities[key] > 0:
+            stop_data[key]["start"] = hour
             in_stop_state.append(key)
 
-    return (new_velocities, in_stop_state)
+        elif stop_data[key]["start"] != None and value > 0:
+            stop_data[key]["end"] = hour
+            restarting.append(key)
+
+    return (new_velocities, in_stop_state, restarting, stop_data)
 
 
 def getStops(plc):
@@ -298,7 +304,6 @@ def checkStart(plc):
         "SCHL1": ReadMemory(plc, 106, 4, S7WLBit),
         "MG320": ReadMemory(plc, 106, 5, S7WLBit),
         "5S07": ReadMemory(plc, 106, 6, S7WLBit),
-        "EVG": False,
         "SCHL6": False
     }
     return machines_start
@@ -341,7 +346,7 @@ def closeSQL(conn, cur):
     conn.close()
 
 
-def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state):
+def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state, restarting, stop_data):
     """
     Uploads all the general data of every machine to the db every cycle.
 
@@ -362,7 +367,7 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_s
         start_times: dictionary with each machine's start times updated.
     """
     for key in machines_status.keys():
-        if key != "SCHL6" and key != "EVG":
+        if key != "SCHL6":
             if machines_status[key] == False and starts[key] == True:
                 start_time = getStartTime(plc, key)
                 if not start_time == False:
@@ -381,7 +386,30 @@ def uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_s
                 query = ('UPDATE machines SET last_stop = %s where id = %s')
                 values = (hour, key)
                 cur.execute(query, values)
-    return (machines_status, start_times)
+            elif key in restarting:
+                query = """INSERT INTO stops_record (date, start_stop, duration, minutes_duration, machine)
+	                        VALUES (%s, %s, %s, %s, %s);"""
+                today = dt.strftime("%A %d/%m/%Y")
+                start_stop = stop_data[key]["start"]
+                end_stop = stop_data[key]["end"]
+                try:
+                    duration = (end_stop - start_stop)
+                except:
+                    print("Duration error None Type")
+                else:
+                    total_seconds = duration.total_seconds()
+                    hours = int(total_seconds / 3600)
+                    minutes = int((-hours * 3600 + total_seconds) / 60)
+                    seconds = int(total_seconds - hours * 3600 - minutes * 60)
+                    duration = datetime.time(hours, minutes, seconds)
+                    minutes_duration = total_seconds / 60
+                    values = (today, start_stop.strftime("%H:%M:%S"), duration, minutes_duration, key)
+                    stop_data[key]["start"] = None
+                    stop_data[key]["end"] = None
+                    restarting.remove(key)
+                    cur.execute(query, values)
+                
+    return (machines_status, start_times, stop_data)
 
 
 def uploadVelocities(cur, velocities, hour):
@@ -394,9 +422,9 @@ def uploadVelocities(cur, velocities, hour):
         hour: actual cycle local time
     """
     query = """INSERT INTO velocities 
-    (timestamp, mg320, pg12, evg, jager, schl1, schl4, schl5, schl6, schl7)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    values = (hour, velocities["MG320"], velocities["5S07"], velocities["EVG"],
+    (timestamp, mg320, pg12, jager, schl1, schl4, schl5, schl6, schl7)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    values = (hour, velocities["MG320"], velocities["5S07"],
               velocities["JAGER"], velocities["SCHL1"], velocities["SCHL4"],
               velocities["SCHL5"], velocities["SCHL6"], velocities["SCHL7"])
     cur.execute(query, values)
@@ -448,7 +476,6 @@ def getMachine(id):
         "SCHL1": "Schlatter 1",
         "MG320": "MG320",
         "5S07": "PG12",
-        "EVG": "EVG",
         "SCHL6": "Schlatter 6"
     }
     return D[id]
@@ -663,7 +690,6 @@ if __name__ == "__main__":
                             "SCHL1": False,
                             "MG320": False,
                             "5S07": False,
-                            "EVG": False,
                             "SCHL6": False
                         }
                         velocities = {
@@ -674,31 +700,66 @@ if __name__ == "__main__":
                             "SCHL1": 0,
                             "MG320": 0,
                             "5S07": 0,
-                            "EVG": 0,
                             "SCHL6": 0
                         }
                         start_times = {}
+                        stop_data = {
+                            "MG320": {
+                                "start": None,
+                                "end": None
+                            },
+                            "5S07": {
+                                "start": None,
+                                "end": None
+                            },
+                            "JAGER": {
+                                "start": None,
+                                "end": None
+                            },
+                            "SCHL1": {
+                                "start": None,
+                                "end": None
+                            },
+                            "SCHL4": {
+                                "start": None,
+                                "end": None
+                            },
+                            "SCHL5": {
+                                "start": None,
+                                "end": None
+                            },
+                            "SCHL6": {
+                                "start": None,
+                                "end": None
+                            },
+                            "SCHL7": {
+                                "start": None,
+                                "end": None
+                            }
+                        }
                         i = 0
                         print("Getting data from PLC and updating db...")
                         while True:
+                            hour = datetime.datetime.now()
                             # Get all data from PLC
                             try:
                                 starts = checkStart(plc)
                                 hits = getProductionData(plc)
                                 stoptimes = getStopTime(plc)
-                                velocities, in_stop_state = getVelocities(plc, velocities)
                                 stops = getStops(plc)
+                                if i % 5 == 0:
+                                    velocities, in_stop_state, restarting, stop_data = getVelocities(plc, velocities, stop_data, hour)
                             except:
                                 print("Error while getting data from PLC")
                                 plc = reconnectPLC(plc, '192.168.8.100')
                             # If successful, update data base
                             else:
-                                hour = datetime.datetime.now().strftime('%H:%M:%S')
+                                hour = hour.strftime('%H:%M:%S')
                                 if i % 5 == 0:
                                     uploadVelocities(cur, velocities, hour)
-                                machines_status, start_times = uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state)
+                                machines_status, start_times, stop_data = uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state, restarting, stop_data)
                                 conn.commit()
-                            # If shift has ended, break loop
+                            If shift has ended, break loop
                             end_of_shift, plc = endOfShift(plc)
                             while end_of_shift == -1:
                                 end_of_shift, plc = endOfShift(plc)

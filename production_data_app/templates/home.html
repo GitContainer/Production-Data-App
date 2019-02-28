@@ -57,6 +57,8 @@
                     
                     </li>
                     <li class="sidebar-list-item"><a href="{{ url_for('prodperhour')}}" class="sidebar-link text-muted"><i class="o-sales-up-1 mr-3 text-gray"></i><span>Producción por hora</span></a></li>
+                    <li class="sidebar-list-item"><a href="{{ url_for('stops_record')}}" class="sidebar-link text-muted">
+                        <img src="{{ url_for('static', filename='images/normal.svg') }}" height="35" width="35"><span style="margin-left:10px">Distribución de paros</span></a></li>
                     <li class="sidebar-list-item"><a href="{{ url_for('record')}}" class="sidebar-link text-muted"><i class="o-database-1 mr-3 text-gray"></i><span>Récord histórico</span></a></li>                    
                 </ul>
               <!-- <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Altas</div>

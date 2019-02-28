@@ -70,13 +70,26 @@
                     <h2 class="h6 text-uppercase mb-0">Producción deseada</h2>
                 </div>
                 <div class="card-body" style="text-align:center">
-                    <p class="mb-5 text-gray" style="margin-bottom: 0px;">Ingresar la meta de golpes por hora: </p>
-                    <input type="number" class="form-control" id="goal" placeholder="Golpes por hora"
-                        style="position: relative; top:-5%; margin-top: -25px;">
-                    <button onclick="graphLine()" class="btn btn-primary"
-                        style="color:lightgray; border-color: lightgray; background-color: #3A3A3C; border-width: 2px; position: relative; margin-top: 15px;">Graficar</button>
+                    <form id="formData" action="{{ url_for('goal', page=self) }}" method="post">
+                        <p class="mb-5 text-gray" style="margin-bottom: 0px; font-size: 10pt">Ingresar la meta de estribos por turno</p>
+                        <input type="number" class="form-control" name="goal" placeholder="Golpes por hora"
+                            style="position: relative; top:-5%; margin-top: -25px;">
+                        <button type="submit" class="btn btn-primary"
+                            style="color:lightgray; border-color: lightgray; background-color: #3A3A3C; border-width: 2px; position: relative; margin-top: 15px;">Graficar</button>
+                    </form>
                 </div>
             </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible" style="width:115%; margin-left:-15%" role="alert">
+                                <li style="list-style-type: none; font-size:10pt">{{ message }}</li>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="row align-items-center flex-row">
@@ -131,24 +144,13 @@
     var chartProduction;
     var chartVel;
     var chartEfficiency;
-    var lineValue = 0;
+    var lineValue = {{ goal }};
     var StopState;
     var labels;
     var playState = true;
     var k;
     window.onload = function () {
         k = true;
-        // Gets or sets variable on local storage for production per hour goal
-        try {
-            if ('lineValueMG320' in localStorage) {
-                lineValue = localStorage.getItem('lineValueMG320');
-            } else {
-                localStorage.setItem('lineValueMG320', lineValue);
-            }
-        }
-        catch (err) {
-            { }
-        }
         // Checks the hour of the server so it can display the correct labels in the graph
         var date = new Date();
         var utcDate = new Date(date.toUTCString());
@@ -279,7 +281,7 @@
         // Request data from the server every 1.5 seconds and 3 seconds, using web socket io
         socket.on('connect', function () {
             setInterval(update, 1500);
-            setInterval(updateVel, 3000);
+            setInterval(updateVel, 5000);
         });
         function update() {
             socket.emit('getData');
@@ -349,13 +351,7 @@
                     timeline.push(json_vel[String(i)]["timestamp"]);
                     velocities.push(json_vel[String(i)]["mg320"]);
                 }
-                var n_1 = velLiveChart.data.datasets[0].data.length;
-                console.log(n_1)
-                if (n_1 >= 3070) {
-                    velocities = velLiveChart.data.datasets[0].data;
-                    timeline = velLiveChart.data.labels;
-                    velLiveChart.data.datasets[0].data.push(Math.random() * 120);
-                    velLiveChart.data.labels.push("Test");
+                if (n >= 3070) {
                     timeline = timeline.slice(-3070);
                     velocities = velocities.slice(-3070);
                     velLiveChart.data.datasets[0].data = velocities;
@@ -369,9 +365,9 @@
                 }
                 else {
                     if (!k) {
-                        velLiveChart.data.datasets[0].data.push(Math.random() * 120);
-                        velLiveChart.data.labels.push("Test");
-                        var newwidth = $('.chartAreaWrapper2').width() + 5; //*(n-n_1)
+                        velLiveChart.data.datasets[0].data = velocities;
+                        velLiveChart.data.labels = timeline;
+                        var newwidth = $('.chartAreaWrapper2').width() + 5;
                         $('.chartAreaWrapper2').width(newwidth);
                         if (playState) {
                             $('.chartAreaWrapper').animate({ scrollLeft: newwidth });

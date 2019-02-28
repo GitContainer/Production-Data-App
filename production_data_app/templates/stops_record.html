@@ -1,0 +1,210 @@
+{% extends "home.html" %}
+
+{% block body %}
+<section class="py-5">
+    <div class="row mb-4">
+        <label for="customRange">Escoger límite de gráficas:
+             <label id="demo"></label>
+             <label> minutos</label>
+        </label>
+        <input type="range" class="custom-range" min="1" max="60" value="5" step="1" id="customRange">
+    </div>
+    <div class="row mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 id="title1" class="h6 text-uppercase mb-0">Histograma de paros</h3>
+                
+                <div align="right" style="margin-top: -3%; margin-bottom:-1%;">
+                    <a class="navbar-brand mr-0 mr-md-2" href="/export_stops" title="Exportar a CSV">
+                        <img src="{{ url_for('static', filename='images/csv.svg') }}" height="36" width="36">
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="SHG" class="chart-container" style="position: relative; height: 400px; width: 1000px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 id="title2" class="h6 text-uppercase mb-0">Histograma de paros</h3>
+            </div>
+            <div class="card-body">
+                <div id="SHG2" class="chart-container" style="position: relative; height: 400px; width: 1000px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chartjs-plugin-annotation.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/plotly.js/plotly-latest.min.js') }}"></script>
+<script>
+    var labels;
+    var limit = 5;
+    window.onload = function () {
+        // Gets or sets variable on local storage for limit
+        try {
+            if ('limitGraph' in localStorage) {
+                limit = localStorage.getItem('limitGraph');
+            } else {
+                localStorage.setItem('limitGraph', limit);
+            }
+        }
+        catch (err) {
+            { }
+        }
+        document.querySelector("#title1").innerHTML = "Histograma de paros: 0 - " + limit + " minutos";
+        document.querySelector("#title2").innerHTML = "Histograma de paros: > " + limit + " minutos";
+        var stops_mg320 = {{ stops["MG320"] }}
+        var stops_pg12 = {{ stops["PG12"] }}
+        var stops_Jager = {{ stops["Jager"] }}
+        var stops_Schl1 = {{ stops["Schl1"] }}
+        var stops_Schl4 = {{ stops["Schl4"] }}
+        var stops_Schl5 = {{ stops["Schl5"] }}
+        var stops_Schl7 = {{ stops["Schl7"] }}
+        var x = stops_mg320.concat(stops_pg12, stops_Jager, stops_Schl1, stops_Schl4, stops_Schl5, stops_Schl7);
+        var x1 = [];
+        var x2 = [];
+        [x1, x2] = divideArray(x, limit);
+        var trace1 = {
+            x: x1,
+            name: 'Histograma de paros de todas las máquinas',
+            autobinx: false,
+            histnorm: "count",
+            marker: {
+                color: "rgba(255, 100, 102, 0.5)",
+                line: {
+                    color: "rgba(255, 100, 102, 1)",
+                    width: 2
+                }
+            },
+            opacity: 0.5,
+            type: "histogram",
+            xbins: {
+                end: limit,
+                size: 1 / 6,
+                start: 0
+            }
+        };
+        var data1 = [trace1];
+        var trace2 = {
+            x: x2,
+            name: 'Histograma de paros de todas las máquinas',
+            autobinx: false,
+            histnorm: "count",
+            marker: {
+                color: "rgba(50, 150, 255, 0.5)",
+                line: {
+                    color: "rgba(50, 150, 255, 1)",
+                    width: 2
+                }
+            },
+            opacity: 0.5,
+            type: "histogram",
+            xbins: {
+                end: Math.max(x2),
+                size: 1,
+                start: limit
+            }
+        };
+        var data2 = [trace2];
+        var layout1 = {
+            title: {
+                text: 'Ancho de barra: 10 segundos',
+                font: {
+                    family: 'Gill Sans',
+                    size: 18,
+                    color: 'darkgray'
+                },
+                xref: 'paper',
+                x: 0.5,
+            },
+            xaxis: {
+                title: {
+                    text: 'Minutos',
+                    font: {
+                        family: 'Gill Sans',
+                        size: 18,
+                        color: 'darkgray'
+                    }
+                },
+            },
+            yaxis: {
+                title: {
+                    text: 'Frecuencia',
+                    font: {
+                        family: 'Gill Sans',
+                        size: 18,
+                        color: 'darkgray'
+                    }
+                }
+            }
+        };
+        var layout2 = {
+            title: {
+                text: 'Ancho de barra: 1 minuto',
+                font: {
+                    family: 'Gill Sans',
+                    size: 18,
+                    color: 'darkgray'
+                },
+                xref: 'paper',
+                x: 0.5,
+            },
+            xaxis: {
+                title: {
+                    text: 'Minutos',
+                    font: {
+                        family: 'Gill Sans',
+                        size: 18,
+                        color: 'darkgray'
+                    }
+                },
+            },
+            yaxis: {
+                title: {
+                    text: 'Frecuencia',
+                    font: {
+                        family: 'Gill Sans',
+                        size: 18,
+                        color: 'darkgray'
+                    }
+                }
+            }
+        };
+        Plotly.newPlot('SHG', data1, layout1);
+        Plotly.newPlot('SHG2', data2, layout2);
+    }
+    function divideArray(array, limit) {
+        var arr1 = [];
+        var arr2 = [];
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] < limit) {
+                arr1.push(array[i]);
+            }
+            else {
+                arr2.push(array[i]);
+            }
+        }
+        return [arr1, arr2];
+    }
+    var slider = document.getElementById("customRange");
+    var output = document.getElementById("demo");
+    output.innerHTML = slider.value; // Display the default slider value
+
+    // Update the current slider value (each time you drag the slider handle)
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+    } 
+
+    slider.onchange = function() {
+        localStorage.setItem('limitGraph', this.value);
+        location.reload();
+    }
+</script>
+{% endblock %}

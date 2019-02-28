@@ -3,11 +3,13 @@
 #  V1.1:
     - Chagend machines and record icon
     - Changed the order of the production record so the first rows of the table corresponds to the closest date
+    - Added pagination in prodcution record so it display only the last week production
     - Added new section: Production per hour, which shows every pph graph and a total pph graph
     - Repaired PLC so in case of power failure the data remains as it was
     - Added production line graph for every machine, restyled information and added work efficiency
     - Modified velocity graph so it can display up to 2800 points, with a scroll bar and a play/pause button.
-    
+    - Added Stops histogram
+    - Added production and stops records to csv buttons
 
 
 

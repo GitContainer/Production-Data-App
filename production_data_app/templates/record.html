@@ -8,8 +8,13 @@
       <div class="card" style="width:1065px">
         <div class="card-header">
           <h6 class="text-uppercase mb-0">
-            <center>Producción por turno</center>
+              Producción por turno
           </h6>
+          <div align="right" style="margin-top: -3%; margin-bottom:-1%;">
+            <a class="navbar-brand mr-0 mr-md-2" href="/export_production" title="Exportar a CSV">
+              <img src="{{ url_for('static', filename='images/csv.svg') }}" height="36" width="36">
+            </a>
+          </div>
         </div>
         <div class="card-body">
           <table id="myTable" class="table card-text" style="width: 1000px;">
@@ -21,7 +26,7 @@
                 <th>Hora de inicio</th>
                 <th>Tiempo en paro</th>
                 <th>Número de paros</th>
-                <th>Golpes</th>
+                <th>Estribos</th>
               </tr>
             </thead>
             <tbody>
@@ -64,9 +69,15 @@
           {% endif %}
         {% endfor %}
         <li class="page-item">
-          <a class="page-link" href="{{ url_for('record', page=production.next_num) }}" aria-label="Next" style="color:black">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
+          {% if production.next_num %}
+            <a class="page-link" href="{{ url_for('record', page=production.next_num) }}" aria-label="Next" style="color:black">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          {% else %}
+            <a class="page-link" href="#" aria-label="Next" style="color:black">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          {% endif %}
         </li>
       </ul>
     </nav>

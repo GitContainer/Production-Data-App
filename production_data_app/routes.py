@@ -1,11 +1,13 @@
 from flask import render_template, request, flash, redirect, url_for, Response, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 import json
-from production_data_app import app, bcrypt, login_manager, socketio
+from production_data_app import app, bcrypt, login_manager, socketio, db
 from werkzeug.contrib.cache import SimpleCache
 from flask_socketio import emit
-from production_data_app.models import User, Production, Velocity, Machine
+from production_data_app.models import User, Production, Velocity, Machine, Stop_record
+import flask_excel as excel
 import collections
+import time as dt
 
 # Amount of time flask is going to keep database queries results whenever it receives a consult
 CACHE_TIMEOUT = 1500
@@ -80,61 +82,109 @@ def record():
     production = Production.query.order_by(Production.id.desc()).paginate(page=page, per_page=48)
     return render_template('record.html', production=production)
 
+@app.route("/stops_record")
+@login_required
+def stops_record():
+    """Redirects to the stops page which has the stops distribuition in a graph"""
+    today = dt.strftime("%A %d/%m/%Y")
+    MG320_stops = Stop_record.query.filter_by(machine='MG320', date=today).with_entities(Stop_record.minutes_duration).all()
+    PG12_stops = Stop_record.query.filter_by(machine='5S07', date=today).with_entities(Stop_record.minutes_duration).all()
+    Jager_stops = Stop_record.query.filter_by(machine='JAGER', date=today).with_entities(Stop_record.minutes_duration).all()
+    Schl1_stops = Stop_record.query.filter_by(machine='SCHL1', date=today).with_entities(Stop_record.minutes_duration).all()
+    Schl4_stops = Stop_record.query.filter_by(machine='SCHL4', date=today).with_entities(Stop_record.minutes_duration).all()
+    Schl5_stops = Stop_record.query.filter_by(machine='SCHL5', date=today).with_entities(Stop_record.minutes_duration).all()
+    Schl7_stops = Stop_record.query.filter_by(machine='SCHL7', date=today).with_entities(Stop_record.minutes_duration).all()
+    stops = {
+        'MG320': flatList(MG320_stops),
+        'PG12': flatList(PG12_stops),
+        'Jager': flatList(Jager_stops),
+        'Schl1': flatList(Schl1_stops),
+        'Schl4': flatList(Schl4_stops),
+        'Schl5': flatList(Schl5_stops),
+        'Schl7': flatList(Schl7_stops)
+    }
+    return render_template('stops_record.html', stops=stops)
+
+
 @app.route("/prodperhour", methods=['GET'])
 @login_required
 def prodperhour():
     """Redirects to the production per hour page which has bar charts of every machine's hourly production"""
-    return render_template('prodperhour.html')
+    goals = dict(Machine.query.with_entities(Machine.name, Machine.goal).all())
+    return render_template('prodperhour.html', goals=goals)
 
 
 @app.route("/MG320", methods=['GET'])
 @login_required
 def MG320():
     """Returns MG320 page which has detailed information about the real time production data of this machine"""
-    return render_template('MG320.html')
+    goal = Machine.query.filter_by(name='MG320').first().goal
+    return render_template('MG320.html', goal=goal)
 
 
 @app.route("/PG12", methods=['GET'])
 @login_required
 def PG12():
     """Returns PG12 page which has detailed information about the real time production data of this machine"""
-    return render_template('PG12.html')
+    goal = Machine.query.filter_by(name='PG12').first().goal
+    return render_template('PG12.html', goal=goal)
 
 
 @app.route("/Jager", methods=['GET'])
 @login_required
 def Jager():
     """Returns Jager page which has detailed information about the real time production data of this machine"""
-    return render_template('Jager.html')
+    goal = Machine.query.filter_by(name='Jager').first().goal
+    return render_template('Jager.html', goal=goal)
 
 
 @app.route("/Schlatter_1", methods=['GET'])
 @login_required
 def Schlatter_1():
     """Returns Schlatter 1 page which has detailed information about the real time production data of this machine"""
-    return render_template('Schlatter_1.html')
+    goal = Machine.query.filter_by(name='Schlatter 1').first().goal
+    return render_template('Schlatter_1.html', goal=goal)
 
 
 @app.route("/Schlatter_4", methods=['GET'])
 @login_required
 def Schlatter_4():
     """Returns Schlatter 4 page which has detailed information about the real time production data of this machine"""
-    return render_template('Schlatter_4.html')
+    goal = Machine.query.filter_by(name='Schlatter 4').first().goal
+    return render_template('Schlatter_4.html', goal=goal)
 
 
 @app.route("/Schlatter_5", methods=['GET'])
 @login_required
 def Schlatter_5():
     """Returns Schlatter 5 page which has detailed information about the real time production data of this machine"""
-    return render_template('Schlatter_5.html')
+    goal = Machine.query.filter_by(name='Schlatter 5').first().goal
+    return render_template('Schlatter_5.html', goal=goal)
 
 
 @app.route("/Schlatter_7", methods=['GET'])
 @login_required
 def Schlatter_7():
     """Returns Schlatter 7 page which has detailed information about the real time production data of this machine"""
-    return render_template('Schlatter_7.html')
+    goal = Machine.query.filter_by(name='Schlatter 7').first().goal
+    return render_template('Schlatter_7.html', goal=goal)
 
+
+@app.route("/goal", methods=['POST'])
+@login_required
+def goal():
+    """Writes in the database the production goal of current machine only if user has permission"""
+    goal = request.form['goal']
+    page = request.args.get('page')[20:-7]
+    if current_user.email == "planeacion@armasel.com" or current_user.email == "admin@armasel.com":
+        db.session.begin()
+        machine_string = page.replace("_", " ")
+        machine = Machine.query.filter_by(name=machine_string).first()
+        machine.goal = goal
+        db.session.commit()
+    else:
+        flash('Error: comunicarse con planeación', 'danger')
+    return redirect(url_for(page))
 
 @login_manager.user_loader
 def load_user(id):
@@ -318,3 +368,34 @@ def getVelocities():
         del d
     new_velocities = json.dumps(D, sort_keys=True)
     emit('new_velocities', new_velocities, broadcast=False)
+
+@app.route("/export_production", methods=['GET'])
+@login_required
+def export_production():
+    query = Production.query.order_by(Production.id.desc()).with_entities(Production.date, Production.shift, Production.machine, Production.start_hour, Production.stop_time, Production.stops, Production.hits).all()
+    records = [('Fecha', 'Turno', 'Maquina', 'Hora de inicio', 'Tiempo en paro', 'Numero de paros', 'Estribos')] + query
+    return excel.make_response_from_array(records, "csv", file_name="Datos_produccion")
+
+@app.route("/export_stops", methods=['GET'])
+@login_required
+def export_records():
+    query = Stop_record.query.with_entities(Stop_record.date, Stop_record.start_stop, Stop_record.duration, Stop_record.minutes_duration, Stop_record.machine).all()
+    records = [('Fecha', 'Hora de inicio', 'Duracion', 'Duracion minutos', 'Maquina')] + query
+    return excel.make_response_from_array(records, "csv", file_name="Paros_maquinas")
+
+def flatList2(x):
+    if x == []:
+        return 
+    else:
+        if isinstance(x, (list, dict, tuple)):
+            x = list(x)
+            item = x.pop(0)
+            return (flatList2(item), flatList2(x))
+        else:
+            y.append(x)
+
+def flatList(x):
+    global y
+    y = []
+    flatList2(x)
+    return y

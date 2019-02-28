@@ -161,8 +161,8 @@
                         type: 'line',
                         mode: 'horizontal',
                         scaleID: 'y-axis-0',
-                        value: 2000,
-                        borderColor: 'tomato',
+                        value: 0,
+                        borderColor: 'black',
                         borderWidth: 2
                     }],
                     drawTime: "afterDraw", 
@@ -221,6 +221,14 @@
         schl4Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
         schl5Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
         schl7Chart.options.scales.xAxes[0].ticks.fontSize = 9.4;
+        mg320Chart.options.annotation.annotations[0].value = {{ goals["MG320"]/10 }}
+        pg12Chart.options.annotation.annotations[0].value = {{ goals["PG12"]/10 }}
+        jagerChart.options.annotation.annotations[0].value = {{ goals["Jager"]/10 }}
+        schl1Chart.options.annotation.annotations[0].value = {{ goals["Schlatter 1"]/10 }}
+        schl4Chart.options.annotation.annotations[0].value = {{ goals["Schlatter 4"]/10 }}
+        schl5Chart.options.annotation.annotations[0].value = {{ goals["Schlatter 5"]/10 }}
+        schl7Chart.options.annotation.annotations[0].value = {{ goals["Schlatter 7"]/10 }}
+        barChart.options.annotation.annotations[0].value = {{ goals["MG320"]/10 }} + {{ goals["PG12"]/10 }} + {{ goals["Jager"]/10 }} + {{ goals["Schlatter 1"]/10 }} + {{ goals["Schlatter 4"]/10 }} + {{ goals["Schlatter 5"]/10 }} + {{ goals["Schlatter 7"]/10 }}
         mg320Chart.update();
         pg12Chart.update();
         jagerChart.update();
