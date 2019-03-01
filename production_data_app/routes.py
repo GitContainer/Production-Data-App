@@ -8,6 +8,8 @@ from production_data_app.models import User, Production, Velocity, Machine, Stop
 import flask_excel as excel
 import collections
 import time as dt
+import locale
+locale.setlocale(locale.LC_TIME, '')
 
 # Amount of time flask is going to keep database queries results whenever it receives a consult
 CACHE_TIMEOUT = 1500

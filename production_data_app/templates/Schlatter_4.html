@@ -122,7 +122,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de las últimas X horas</label>
+                    <label class="mb-5 text-gray">Se muestran los datos de velocidad de las últimas 5 horas</label>
                     <div class="chartWrapper">
                         <div class="chartAreaWrapper">
                             <div class="chartAreaWrapper2">
@@ -321,7 +321,12 @@
                     var thours = (hour * 3600 + minute * 60 + second - 27000) / 3600;
                 }
                 else {
-                    var thours = (hour * 3600 + minute * 60 + second - 77400) / 3600;
+                    if (hour <= 23){
+                        var thours = (hour * 3600 + minute * 60 + second - 77400) / 3600;
+                    }
+                    else {
+                        var thours = (hour * 3600 + minute * 60 + second + 9000) / 3600;
+                    }
                 }
                 var ahours = thours - shours;
                 document.querySelector("#active_hours").innerHTML = (ahours).toFixed(2);

@@ -759,7 +759,7 @@ if __name__ == "__main__":
                                     uploadVelocities(cur, velocities, hour)
                                 machines_status, start_times, stop_data = uploadData(cur, starts, stoptimes, stops, velocities, hits, hour, machines_status, start_times, in_stop_state, restarting, stop_data)
                                 conn.commit()
-                            If shift has ended, break loop
+                            # If shift has ended, break loop
                             end_of_shift, plc = endOfShift(plc)
                             while end_of_shift == -1:
                                 end_of_shift, plc = endOfShift(plc)
