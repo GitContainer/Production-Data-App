@@ -681,6 +681,10 @@ if __name__ == "__main__":
                         "postgres", "4RM453LDB", "localhost", "production_data")
                     if conn:
                         print("Connected to db")
+                        # Erase dynamic table content
+                        emptyTable(cur)
+                        conn.commit()
+                        print("Cleared table")
                         # Initialize dictionaries
                         machines_status = {
                             "SCHL4": False,
@@ -788,10 +792,6 @@ if __name__ == "__main__":
                         success_status, plc = resetAKS(plc)
                         while success_status == False:
                             success_status, plc = resetAKS(plc)
-                        # Erase dynamic table content
-                        emptyTable(cur)
-                        conn.commit()
-                        print("Cleared table")
                         # Close connection to data base
                         closeSQL(conn, cur)
                         print("Closed connection to db")

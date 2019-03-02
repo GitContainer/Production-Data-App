@@ -12,7 +12,8 @@
     - Added Stops histogram
     - Added production and stops records to csv buttons
 
-
+# V1.2:
+    - Data after shift has ended stays displayed on web page so it can be analyzed until next shift starts
 
 
 ## Instructions
